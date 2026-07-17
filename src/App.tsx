@@ -639,10 +639,22 @@ export default function App() {
     if (window.parent === window) return
 
     let lobbyOrigin = 'http://localhost:3000'
-    try {
-      const refUrl = new URL(document.referrer)
-      lobbyOrigin = refUrl.origin
-    } catch {}
+
+    // 1. Intentar desde document.referrer (caso normal)
+    if (document.referrer) {
+      try {
+        const refUrl = new URL(document.referrer)
+        lobbyOrigin = refUrl.origin
+      } catch {}
+    }
+
+    // 2. Intentar desde window.location.ancestorOrigins (Chrome/Firefox moderno)
+    if (window.location.ancestorOrigins?.length) {
+      try {
+        const origin = window.location.ancestorOrigins[0]
+        if (origin) lobbyOrigin = origin
+      } catch {}
+    }
 
     const lobby = createLobbyClient({ lobbyOrigin })
     lobby.onReady({ version: '1.0.0' })
