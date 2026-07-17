@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "target": "sopadeknowledge",
     "public": "dist",
     "ignore": [
       "firebase.json",
@@ -18,8 +19,7 @@
         "headers": [
           {
             "key": "Cache-Control",
-            "max-age": 31536000,
-            "directive": "public"
+            "value": "public, max-age=31536000, immutable"
           }
         ]
       },
@@ -28,8 +28,7 @@
         "headers": [
           {
             "key": "Cache-Control",
-            "max-age": 0,
-            "directive": "no-cache"
+            "value": "no-cache"
           }
         ]
       }
