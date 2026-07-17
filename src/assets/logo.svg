@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120">
+  <defs>
+    <linearGradient id="g-sopa" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fb923c"/>
+      <stop offset="50%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <linearGradient id="g-knowledge" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#f97316"/>
+    </linearGradient>
+    <linearGradient id="g-underline" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f97316" stop-opacity="0"/>
+      <stop offset="30%" stop-color="#f97316" stop-opacity="0.8"/>
+      <stop offset="70%" stop-color="#d97706" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#d97706" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="glow">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#f97316" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <!-- S para decoración -->
+  <text x="18" y="52" font-family="'Archivo Black',sans-serif" font-size="56" font-weight="900" fill="none" stroke="url(#g-sopa)" stroke-width="1" opacity="0.15">S</text>
+  <!-- Línea subrayado decorativo -->
+  <line x1="20" y1="105" x2="380" y2="105" stroke="url(#g-underline)" stroke-width="2"/>
+  <!-- SOPA DE -->
+  <text x="20" y="52" font-family="'Inter',sans-serif" font-size="18" font-weight="500" fill="#8a86a0" letter-spacing="12">SOPA  DE</text>
+  <!-- KNOWLEDGE -->
+  <text x="20" y="90" font-family="'Archivo Black',sans-serif" font-size="40" font-weight="900" fill="url(#g-knowledge)" filter="url(#glow)" letter-spacing="1">KNOWLEDGE</text>
+  <!-- Corona decorativa -->
+  <text x="375" y="38" font-size="24" fill="#fbbf24" opacity="0.6">👑</text>
+</svg>

@@ -1,0 +1,154 @@
+@import "tailwindcss";
+
+@theme {
+  --font-heading: 'Archivo Black', sans-serif;
+  --font-graffiti: 'Bangers', cursive;
+  --font-body: 'Inter', sans-serif;
+
+  /* Neon Yellow - primary accent */
+  --color-yellow-neon: #FFC107;
+  --color-yellow-neon-dark: #E5A800;
+  --color-yellow-neon-50: #FFF8E1;
+  --color-yellow-neon-100: #FFF0B3;
+  --color-yellow-neon-200: #FFE480;
+  --color-yellow-neon-300: #FFD84D;
+  --color-yellow-neon-400: #FFC107;
+  --color-yellow-neon-500: #E5A800;
+  --color-yellow-neon-600: #B88600;
+  --color-yellow-neon-700: #8B6500;
+  --color-yellow-neon-800: #5D4300;
+  --color-yellow-neon-900: #2E2100;
+
+  /* Electric Purple */
+  --color-purple-neon: #8E44AD;
+  --color-purple-neon-light: #A569C9;
+  --color-purple-neon-dark: #6C3483;
+  --color-purple-neon-400: #8E44AD;
+  --color-purple-neon-500: #7C3AED;
+  --color-purple-neon-600: #6C3483;
+
+  /* Neon Green */
+  --color-green-neon: #10B981;
+  --color-green-neon-light: #34D399;
+  --color-green-neon-400: #10B981;
+  --color-green-neon-500: #059669;
+
+  /* Background / Surface colors */
+  --color-bg-primary: #0F0F0F;
+  --color-bg-card: #1A1A1A;
+  --color-bg-elevated: #222222;
+  --color-bg-surface: #1E1E1E;
+
+  /* Text */
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #A0A0A0;
+  --color-text-muted: #666666;
+
+  /* Border */
+  --color-border-subtle: #2D2D2D;
+  --color-border-card: #333333;
+
+  /* Legacy mappings for backward compat */
+  --color-hiphop-50: var(--color-yellow-neon-50);
+  --color-hiphop-100: var(--color-yellow-neon-100);
+  --color-hiphop-200: var(--color-yellow-neon-200);
+  --color-hiphop-300: var(--color-yellow-neon-300);
+  --color-hiphop-400: var(--color-yellow-neon-400);
+  --color-hiphop-500: var(--color-yellow-neon-500);
+  --color-hiphop-600: var(--color-yellow-neon-600);
+  --color-hiphop-700: var(--color-yellow-neon-700);
+  --color-hiphop-800: var(--color-yellow-neon-800);
+  --color-hiphop-900: var(--color-yellow-neon-900);
+  --color-hiphop-950: #1A0F00;
+
+  --color-gold: var(--color-yellow-neon-400);
+  --color-gold-dark: var(--color-yellow-neon-500);
+  --color-panel: var(--color-bg-card);
+  --color-surface: var(--color-bg-primary);
+  --color-card: var(--color-bg-elevated);
+}
+
+/* ─── Global ─── */
+body {
+  margin: 0;
+  background: #0F0F0F;
+  color: #FFFFFF;
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Selection colors for grid highlights */
+:root {
+  --hl-purple: #8E44AD;
+  --hl-yellow: #FFC107;
+  --hl-green: #10B981;
+  --hl-pink: #EC4899;
+  --hl-blue: #3B82F6;
+  --hl-orange: #F97316;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #555; }
+
+/* Graffiti text stroke utility */
+.text-stroke-yellow {
+  text-shadow:
+    -2px -2px 0 #000,
+     2px -2px 0 #000,
+    -2px  2px 0 #000,
+     2px  2px 0 #000,
+     0 0 20px rgba(255, 193, 7, 0.3);
+}
+
+/* Cell found pulse */
+.cell-found {
+  animation: cellPulse 0.35s ease-out;
+}
+@keyframes cellPulse {
+  0% { transform: scale(1.25); filter: brightness(1.4); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+
+/* Knowledge card entrance */
+@keyframes cardSlideUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.card-enter {
+  animation: cardSlideUp 0.35s ease-out;
+}
+
+/* Score floating animation */
+@keyframes scoreFloat {
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-48px) scale(1.2); }
+}
+.animate-score-float {
+  animation: scoreFloat 0.7s ease-out forwards;
+}
+
+/* Particle burst */
+@keyframes particle {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
+}
+
+/* Glowing outline for interaction */
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 6px rgba(255, 193, 7, 0.15); }
+  50% { box-shadow: 0 0 16px rgba(255, 193, 7, 0.35); }
+}
+.cell-selected-glow {
+  animation: glowPulse 1s ease-in-out infinite;
+}
+
+/* Splash loading bar shimmer */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
