@@ -29,6 +29,8 @@ import { loadProgress, saveProgress } from './game/progression'
 import { syncToSupabase, syncFromSupabase, mergeProgress } from './lib/supabase-sync'
 import { createLobbyClient } from './lib/sdk/lobby-client'
 import type { LobbyClientInstance } from './lib/sdk/lobby-client'
+import { Button, Card, Chip, Progress, ScreenHeader } from './components/ui'
+import { IconPlay, IconStar, IconBook, IconCart, IconHome, IconGrid, IconProfile } from './components/icons'
 
 /* ─── Direction snapping for mobile ─── */
 
@@ -134,8 +136,14 @@ function Board({ cells, onCellPointerDown, onCellPointerEnter, onCellPointerUp, 
                 key={`${r}-${c}`}
                 data-r={r}
                 data-c={c}
-                className={`aspect-square flex items-center justify-center text-sm md:text-base lg:text-lg font-extrabold rounded-sm transition-all duration-75 cursor-pointer select-none ${isFound ? 'text-white font-black shadow-sm' : isSelected ? 'bg-white/25 text-white scale-105' : 'bg-white text-black hover:bg-white/90'}`}
-                style={isFound && hlColor ? { backgroundColor: hlColor, boxShadow: `0 0 10px ${hlColor}44` } : isSelected ? { backgroundColor: '#8E44AD' } : undefined}
+                className={`aspect-square flex items-center justify-center text-sm md:text-base lg:text-lg font-extrabold rounded-md transition-all duration-100 cursor-pointer select-none ${
+                  isFound
+                    ? 'text-white font-black shadow-md'
+                    : isSelected
+                      ? 'bg-yellow-neon text-black scale-110 shadow-[0_0_12px_rgba(255,193,7,0.45)] ring-2 ring-yellow-neon/50 z-10'
+                      : 'bg-white text-black hover:bg-yellow-neon/15 hover:text-white'
+                }`}
+                style={isFound && hlColor ? { backgroundColor: hlColor, boxShadow: `0 0 12px ${hlColor}55` } : undefined}
                 role="gridcell"
               >
                 {cell.letter}
@@ -403,29 +411,44 @@ function HomeScreen({ onPlay, onDaily, onKnowledge, onStore, progress, stats }: 
 }) {
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-6 pb-20 pt-6">
-      <div className="text-center mb-1"><p className="text-[10px] text-text-muted uppercase tracking-[0.2em]">JUEGA HIP HOP</p></div>
+      <div className="text-center mb-2">
+        <p className="text-overline text-[10px] text-text-muted mb-3">Juega Hip Hop</p>
+      </div>
       <div className="text-center mb-2 relative">
         <div className="relative inline-block">
-          <h1 className="font-graffiti text-5xl md:text-6xl leading-none tracking-wide"><span className="text-white/90">SOPA DE</span></h1>
+          <h1 className="text-display text-5xl md:text-6xl leading-none tracking-wide">
+            <span className="text-white/90">SOPA DE</span>
+          </h1>
           <div className="flex items-center justify-center">
-            <span className="font-graffiti text-5xl md:text-7xl leading-none text-yellow-neon text-stroke-yellow tracking-wide">KNOW</span>
+            <span className="text-display text-5xl md:text-7xl leading-none text-yellow-neon text-stroke-yellow tracking-wide">KNOW</span>
             <span className="relative inline-flex items-center">
-              <span className="font-graffiti text-5xl md:text-7xl leading-none text-yellow-neon text-stroke-yellow tracking-wide">W</span>
-              <span className="absolute -top-6 -right-1 text-xl md:text-2xl drop-shadow-lg">👑</span>
+              <span className="text-display text-5xl md:text-7xl leading-none text-yellow-neon text-stroke-yellow tracking-wide">LEDGE</span>
+              <span className="absolute -top-5 -right-2 text-lg md:text-xl drop-shadow-lg" aria-hidden="true">👑</span>
             </span>
-            <span className="font-graffiti text-5xl md:text-7xl leading-none text-yellow-neon text-stroke-yellow tracking-wide">LEDGE</span>
           </div>
         </div>
       </div>
-      <p className="text-xs text-text-muted mt-1 mb-8 tracking-[0.15em] uppercase font-semibold">Aprende Hip Hop Jugando</p>
-      <button onClick={onPlay} className="w-full max-w-xs py-4 bg-yellow-neon text-black font-heading text-base rounded-2xl shadow-lg shadow-yellow-neon/30 hover:scale-[1.02] active:scale-[0.98] transition-transform mb-3 uppercase tracking-wider font-bold">🎮 JUGAR</button>
-      <button onClick={onDaily} className="w-full max-w-xs py-3.5 bg-purple-neon text-white font-bold text-sm rounded-2xl hover:brightness-110 active:brightness-90 transition-all mb-3 uppercase tracking-wider shadow-lg shadow-purple-neon/20">⭐ DESAFÍOS DIARIOS</button>
-      <button onClick={onKnowledge} className="w-full max-w-xs py-3 bg-white/10 text-white/80 font-semibold text-sm rounded-2xl hover:bg-white/15 active:brightness-90 transition-all mb-2 uppercase tracking-wider border border-border-subtle">📖 MI KNOWLEDGE</button>
-      <button onClick={onStore} className="w-full max-w-xs py-3 bg-white/10 text-white/80 font-semibold text-sm rounded-2xl hover:bg-white/15 active:brightness-90 transition-all mb-2 uppercase tracking-wider border border-border-subtle">🛒 TIENDA</button>
-      <div className="flex gap-2 mt-5">
-        <div className="flex items-center gap-1.5 text-xs bg-bg-elevated/60 px-3 py-1.5 rounded-full border border-border-subtle"><span className="text-yellow-neon">✦</span><span className="text-text-secondary">Nivel {stats.level}</span></div>
-        <div className="flex items-center gap-1.5 text-xs bg-bg-elevated/60 px-3 py-1.5 rounded-full border border-border-subtle"><span className="text-yellow-neon">📖</span><span className="text-text-secondary">{stats.wordsFound} palabras</span></div>
-        <div className="flex items-center gap-1.5 text-xs bg-bg-elevated/60 px-3 py-1.5 rounded-full border border-border-subtle"><span className="text-yellow-neon">🔥</span><span className="text-text-secondary">{progress.dailyStreak} días</span></div>
+      <p className="text-overline text-[11px] text-text-secondary mt-2 mb-7">Aprende Hip Hop Jugando</p>
+
+      <div className="w-full max-w-xs space-y-3">
+        <Button variant="primary" size="lg" fullWidth icon={<IconPlay size={20} />} onClick={onPlay}>
+          Jugar
+        </Button>
+        <Button variant="secondary" size="md" fullWidth icon={<IconStar size={18} />} onClick={onDaily}>
+          Desafíos Diarios
+        </Button>
+        <Button variant="ghost" size="md" fullWidth icon={<IconBook size={18} />} onClick={onKnowledge}>
+          Mi Knowledge
+        </Button>
+        <Button variant="ghost" size="md" fullWidth icon={<IconCart size={18} />} onClick={onStore}>
+          Tienda
+        </Button>
+      </div>
+
+      <div className="flex gap-2 mt-6">
+        <Chip><span className="text-yellow-neon">✦</span> Nivel {stats.level}</Chip>
+        <Chip><span className="text-yellow-neon">📖</span> {stats.wordsFound} palabras</Chip>
+        <Chip><span className="text-orange-400">🔥</span> {progress.dailyStreak} días</Chip>
       </div>
     </div>
   )
@@ -485,7 +508,8 @@ function GameHubScreen({ progress, stats, onStartGame, onBack, selectedMode, onC
   onStartGame: () => void; onBack: () => void
   selectedMode: string; onChangeMode: (mode: string) => void
 }) {
-  const pct = stats.xpForNext > 0 ? Math.min(100, (stats.currentXp / stats.xpForNext) * 100) : 100
+  const _pctUnused = stats.xpForNext > 0 ? Math.min(100, (stats.currentXp / stats.xpForNext) * 100) : 100
+  void _pctUnused
 
   const catProgress = categories.map(cat => {
     const count = progress.wordsFound.filter(fw => fw.category === cat.id).length
@@ -505,96 +529,113 @@ function GameHubScreen({ progress, stats, onStartGame, onBack, selectedMode, onC
 
   return (
     <div className="flex-1 flex flex-col overflow-y-auto bg-bg-primary">
-      <div className="flex items-center justify-between px-4 py-3 bg-bg-card border-b border-border-subtle">
-        <button onClick={onBack} className="flex items-center gap-1 text-sm text-text-muted hover:text-white transition-colors">
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-          Volver
-        </button>
-        <h2 className="font-graffiti text-lg text-yellow-neon tracking-wide">SOPA DE KNOWLEDGE</h2>
-        <div className="w-16" />
-      </div>
-      <div className="flex-1 px-4 py-5 max-w-lg mx-auto w-full space-y-4 pb-24">
-        {/* Mode selector */}
-        <div className="flex gap-1.5 overflow-x-auto pb-1">
-          {Object.entries(modeLabels).map(([id, m]) => (
-            <button key={id} onClick={() => onChangeMode(id)}
-              className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider whitespace-nowrap transition-all ${selectedMode === id ? 'bg-yellow-neon text-black' : 'bg-bg-elevated/60 text-text-muted border border-border-card hover:bg-white/10'}`}>
-              <span>{m.icon}</span> {m.name}
-            </button>
-          ))}
-        </div>
+      <ScreenHeader title="Sopa de Knowledge" onBack={onBack} right={<div className="w-12" />} />
+        <div className="flex-1 px-4 py-5 max-w-lg mx-auto w-full space-y-4 pb-24">
+          {/* Mode selector — responsive grid (no horizontal scroll truncation) */}
+          <div className="grid grid-cols-3 gap-2">
+            {Object.entries(modeLabels).map(([id, m]) => {
+              const isActive = selectedMode === id
+              return (
+                <button
+                  key={id}
+                  onClick={() => onChangeMode(id)}
+                  className={[
+                    'flex flex-col items-center justify-center gap-1 px-2 py-2.5 rounded-lg',
+                    'text-[10px] font-bold uppercase tracking-wider transition-all',
+                    isActive
+                      ? 'bg-yellow-neon text-black shadow-[0_3px_0_0_var(--btn-shadow-yellow)]'
+                      : 'bg-bg-elevated/60 text-text-secondary border border-border-card hover:bg-white/10',
+                  ].join(' ')}
+                >
+                  <span className="text-base leading-none">{m.icon}</span>
+                  <span className="text-center leading-tight">{m.name}</span>
+                </button>
+              )
+            })}
+          </div>
 
-        {/* Player Card */}
-        <div className="bg-bg-card rounded-2xl border border-border-card overflow-hidden">
-          <div className="flex items-center gap-4 px-5 pt-5 pb-3">
-            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-yellow-neon to-purple-neon flex items-center justify-center text-2xl shadow-lg shadow-yellow-neon/20 flex-shrink-0">🧢</div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-base text-white">NIVEL {stats.level}</span>
-                <span className="text-[10px] rounded-full font-semibold uppercase tracking-wider px-2 py-0.5" style={{ color: stats.rank.color, background: `${stats.rank.color}22` }}>{stats.rank.icon} {stats.rank.name}</span>
+          {/* Player Card */}
+          <Card className="overflow-hidden">
+            <div className="flex items-center gap-4 px-5 pt-5 pb-3">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-yellow-neon to-purple-neon flex items-center justify-center text-2xl shadow-[var(--shadow-glow-yellow)] flex-shrink-0">
+                🧢
               </div>
-              <div className="mt-1.5">
-                <div className="flex justify-between text-[10px] text-text-muted mb-1"><span>✦ {stats.currentXp} XP</span><span>{stats.xpForNext} XP</span></div>
-                <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-yellow-neon to-yellow-neon-300 rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-heading text-base text-white">Nivel {stats.level}</span>
+                  <span className="text-[10px] rounded-full font-semibold uppercase tracking-wider px-2 py-0.5" style={{ color: stats.rank.color, background: `${stats.rank.color}22` }}>
+                    {stats.rank.icon} {stats.rank.name}
+                  </span>
+                </div>
+                <div className="mt-2">
+                  <div className="flex justify-between text-[10px] text-text-muted mb-1">
+                    <span>✦ {stats.currentXp} XP</span>
+                    <span>{stats.xpForNext} XP</span>
+                  </div>
+                  <Progress value={stats.currentXp} max={stats.xpForNext} height="md" color="linear-gradient(90deg, #FFC107, #FFE480)" />
                 </div>
               </div>
             </div>
-          </div>
-          <div className="grid grid-cols-4 gap-px bg-border-subtle mx-5 mb-4 rounded-xl overflow-hidden">
-            {[
-              { label: 'Palabras', value: `${progress.totalWordsFound}`, icon: '📖', color: 'text-yellow-neon' },
-              { label: 'Monedas', value: `${progress.coins || 0}`, icon: '🪙', color: 'text-yellow-neon' },
-              { label: 'Knowledge', value: `${progress.knowledgePoints || 0}`, icon: '💎', color: 'text-purple-neon-light' },
-              { label: 'Racha', value: `${progress.dailyStreak}🔥`, icon: '🔥', color: 'text-orange-400' },
-            ].map(s => (
-              <div key={s.label} className="bg-bg-elevated/60 p-2.5 text-center">
-                <div className="text-lg mb-0.5">{s.icon}</div>
-                <div className={`text-sm font-bold ${s.color}`}>{s.value}</div>
-                <div className="text-[8px] text-text-muted uppercase tracking-wider mt-0.5">{s.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
+            <div className="grid grid-cols-4 gap-px bg-border-subtle mx-5 mb-4 rounded-xl overflow-hidden">
+              {(
+                [
+                  { label: 'Palabras', value: progress.totalWordsFound, icon: '📖', color: 'text-yellow-neon' },
+                  { label: 'Monedas', value: progress.coins || 0, icon: '🪙', color: 'text-yellow-neon' },
+                  { label: 'Knowledge', value: progress.knowledgePoints || 0, icon: '💎', color: 'text-purple-neon-light' },
+                  { label: 'Racha', value: progress.dailyStreak, icon: '🔥', color: 'text-orange-400' },
+                ] as const
+              ).map(s => (
+                <div key={s.label} className="bg-bg-elevated/60 p-2.5 text-center">
+                  <div className="text-base mb-0.5">{s.icon}</div>
+                  <div className={`text-sm font-bold ${s.color}`}>{s.value}</div>
+                  <div className="text-[8px] text-text-muted uppercase tracking-wider mt-0.5">{s.label}</div>
+                </div>
+              ))}
+            </div>
+          </Card>
 
-        {/* Play Button */}
-        <button onClick={onStartGame} className="w-full py-4 bg-yellow-neon text-black font-heading text-lg rounded-2xl shadow-lg shadow-yellow-neon/30 hover:scale-[1.02] active:scale-[0.98] transition-all uppercase tracking-wider font-bold">
-          🎮 COMENZAR
-        </button>
+          {/* Play Button */}
+          <Button variant="primary" size="lg" fullWidth
+            icon={<IconPlay size={22} />}
+            onClick={onStartGame}
+            className="!text-lg !py-4 !rounded-2xl shadow-[0_6px_20px_rgba(255,193,7,0.25)]"
+          >
+            Comenzar
+          </Button>
 
-        {/* Categories */}
-        <div className="bg-bg-card rounded-2xl border border-border-card px-5 py-4">
-          <h3 className="text-[10px] uppercase tracking-[0.15em] text-text-muted font-semibold mb-3">Progreso por Categoría</h3>
-          <div className="space-y-2.5">
-            {unlockedCats.slice(0, 5).map(cat => (
-              <div key={cat.id} className="flex items-center gap-2.5">
-                <span className="text-base flex-shrink-0">{cat.icon}</span>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-0.5">
-                    <span className="text-xs font-semibold text-white truncate" style={{ color: cat.color }}>{cat.name}</span>
-                    <span className="text-[9px] text-text-muted flex-shrink-0 ml-2">{cat.count}/{cat.total}</span>
-                  </div>
-                  <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-                    <div className="h-full rounded-full transition-all duration-500" style={{ width: `${cat.total > 0 ? (cat.count / cat.total) * 100 : 0}%`, background: cat.color }} />
+          {/* Categories */}
+          <Card className="px-5 py-4">
+            <h3 className="text-overline text-[10px] text-text-muted mb-3">Progreso por Categoría</h3>
+            <div className="space-y-3">
+              {unlockedCats.slice(0, 5).map(cat => (
+                <div key={cat.id} className="flex items-center gap-2.5">
+                  <span className="text-base flex-shrink-0">{cat.icon}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-semibold truncate" style={{ color: cat.color }}>{cat.name}</span>
+                      <span className="text-[9px] text-text-muted flex-shrink-0 ml-2">{cat.count}/{cat.total}</span>
+                    </div>
+                    <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+                      <div className="h-full rounded-full transition-all duration-500" style={{ width: `${cat.total > 0 ? (cat.count / cat.total) * 100 : 0}%`, background: cat.color }} />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-            {unlockedCats.length === 0 && <p className="text-xs text-text-muted text-center py-2">Desbloquea categorías subiendo de nivel</p>}
-          </div>
+              ))}
+              {unlockedCats.length === 0 && <p className="text-xs text-text-muted text-center py-2">Desbloquea categorías subiendo de nivel</p>}
+            </div>
+          </Card>
         </div>
       </div>
-    </div>
   )
 }
 
 /* ─── Bottom Nav ─── */
 
-const NAV_ITEMS: { id: Screen; label: string; icon: string }[] = [
-  { id: 'home', label: 'INICIO', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
-  { id: 'categories', label: 'CATEGORÍAS', icon: 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z' },
-  { id: 'collection', label: 'COLECCIÓN', icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' },
-  { id: 'profile', label: 'PERFIL', icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
+const NAV_ITEMS: { id: Screen; label: string; icon: React.ReactNode }[] = [
+  { id: 'home', label: 'Inicio', icon: <IconHome size={20} /> },
+  { id: 'categories', label: 'Categorías', icon: <IconGrid size={20} /> },
+  { id: 'collection', label: 'Colección', icon: <IconBook size={20} /> },
+  { id: 'profile', label: 'Perfil', icon: <IconProfile size={20} /> },
 ]
 
 function BottomNav({ active, onChange }: { active: Screen; onChange: (s: Screen) => void }) {
@@ -604,11 +645,13 @@ function BottomNav({ active, onChange }: { active: Screen; onChange: (s: Screen)
         {NAV_ITEMS.map(item => {
           const isActive = active === item.id
           return (
-            <button key={item.id} onClick={() => onChange(item.id)} className="flex flex-col items-center gap-0.5 py-1 px-3 min-w-0">
-              <svg className={`w-5 h-5 transition-colors ${isActive ? 'text-yellow-neon' : 'text-text-muted'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={isActive ? 2 : 1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
-              </svg>
-              <span className={`text-[9px] font-semibold tracking-widest transition-colors ${isActive ? 'text-yellow-neon' : 'text-text-muted'}`}>{item.label}</span>
+            <button key={item.id} onClick={() => onChange(item.id)} className="flex flex-col items-center justify-center gap-1 py-1 px-3 min-w-0">
+              <span className={`transition-colors ${isActive ? 'text-yellow-neon' : 'text-text-muted'}`}>
+                {item.icon}
+              </span>
+              <span className={`text-[9px] font-semibold tracking-widest transition-colors leading-none ${isActive ? 'text-yellow-neon' : 'text-text-muted'}`}>
+                {item.label}
+              </span>
             </button>
           )
         })}

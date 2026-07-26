@@ -1,11 +1,18 @@
 @import "tailwindcss";
 
-@theme {
-  --font-heading: 'Archivo Black', sans-serif;
-  --font-graffiti: 'Bangers', cursive;
-  --font-body: 'Inter', sans-serif;
+/* ═══════════════════════════════════════════════════════
+   SOPA DE KNOWLEDGE — Design System Tokens
+   Premium dark theme: charcoal + neon yellow/purple accents
+   ═══════════════════════════════════════════════════════ */
 
-  /* Neon Yellow - primary accent */
+@theme {
+  /* ─── Typography ─── */
+  --font-display: 'Bangers', cursive;
+  --font-heading: 'Archivo Black', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Menlo', monospace;
+
+  /* ─── Neon Yellow — primary accent ─── */
   --color-yellow-neon: #FFC107;
   --color-yellow-neon-dark: #E5A800;
   --color-yellow-neon-50: #FFF8E1;
@@ -19,36 +26,64 @@
   --color-yellow-neon-800: #5D4300;
   --color-yellow-neon-900: #2E2100;
 
-  /* Electric Purple */
+  /* ─── Electric Purple — secondary accent ─── */
   --color-purple-neon: #8E44AD;
   --color-purple-neon-light: #A569C9;
-  --color-purple-neon-dark: #6C3483;
   --color-purple-neon-400: #8E44AD;
   --color-purple-neon-500: #7C3AED;
   --color-purple-neon-600: #6C3483;
+  --color-purple-neon-dark: #6C3483;
 
-  /* Neon Green */
+  /* ─── Neon Green ─── */
   --color-green-neon: #10B981;
   --color-green-neon-light: #34D399;
   --color-green-neon-400: #10B981;
   --color-green-neon-500: #059669;
 
-  /* Background / Surface colors */
+  /* ─── Background / Surface — elevated charcoal ─── */
   --color-bg-primary: #0F0F0F;
   --color-bg-card: #1A1A1A;
-  --color-bg-elevated: #222222;
-  --color-bg-surface: #1E1E1E;
+  --color-bg-elevated: #1F1F1F;
+  --color-bg-surface: #161616;
 
-  /* Text */
+  /* ─── Text — improved contrast for accessibility ─── */
   --color-text-primary: #FFFFFF;
-  --color-text-secondary: #A0A0A0;
-  --color-text-muted: #666666;
+  --color-text-secondary: #C7C7C7;    /* was #A0A0A0 — too low */
+  --color-text-muted: #8A8A95;        /* was #666666 — barely readable */
 
-  /* Border */
-  --color-border-subtle: #2D2D2D;
-  --color-border-card: #333333;
+  /* ─── Borders ─── */
+  --color-border-subtle: #2A2A2A;
+  --color-border-card: #383838;
+  --color-border-strong: #4A4A4A;
 
-  /* Legacy mappings for backward compat */
+  /* ─── Radii (squircle-friendly) ─── */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-squircle: 14px;       /* slight squircle effect */
+  --radius-pill: 9999px;
+
+  /* ─── Shadow system — subtle depth ─── */
+  --shadow-card: 0 2px 8px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08);
+  --shadow-elevated: 0 8px 24px rgba(0,0,0,0.25);
+  --shadow-glow-yellow: 0 4px 20px rgba(255,193,7,0.25);
+  --shadow-glow-purple: 0 4px 20px rgba(142,68,173,0.20);
+  --shadow-glow-green: 0 4px 20px rgba(16,185,129,0.20);
+
+  /* 3D button shadows — bottom border darker shade */
+  --btn-shadow-yellow: #B88600;
+  --btn-shadow-purple: #6C3483;
+  --btn-shadow-green: #059669;
+  --btn-shadow-dark: #2D2D2D;
+
+  /* ─── Animation tokens ─── */
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ─── Legacy aliases — backward compatibility ─── */
   --color-hiphop-50: var(--color-yellow-neon-50);
   --color-hiphop-100: var(--color-yellow-neon-100);
   --color-hiphop-200: var(--color-yellow-neon-200);
@@ -68,18 +103,32 @@
   --color-card: var(--color-bg-elevated);
 }
 
-/* ─── Global ─── */
+/* ═══════════════════════════════════════════════════════
+   Global — subtle grid texture background
+   ═══════════════════════════════════════════════════════ */
 body {
   margin: 0;
-  background: #0F0F0F;
-  color: #FFFFFF;
+  background-color: var(--color-bg-primary);
+  /* Subtle dot texture — prevents flat void */
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  color: var(--color-text-primary);
   font-family: var(--font-body);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* iOS momentum scroll */
+  -webkit-overflow-scrolling: touch;
 }
 
-/* Selection colors for grid highlights */
+/* Selection color */
+::selection {
+  background: rgba(255, 193, 7, 0.3);
+  color: white;
+}
+
+/* Grid highlight roots (kept for backward compat) */
 :root {
   --hl-purple: #8E44AD;
   --hl-yellow: #FFC107;
@@ -89,66 +138,136 @@ body {
   --hl-orange: #F97316;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 4px; }
+/* ═══════════════════════════════════════════════════════
+   Scrollbar — slim and discreet
+   ═══════════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: #555; }
+::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover { background: #666; }
 
-/* Graffiti text stroke utility */
+/* ═══════════════════════════════════════════════════════
+   Typography utilities
+   ═══════════════════════════════════════════════════════ */
+.text-display {
+  font-family: var(--font-display);
+  font-weight: 400; /* Bangers is heavy already */
+  letter-spacing: 0.02em;
+}
+.text-heading {
+  font-family: var(--font-heading);
+  letter-spacing: -0.01em;
+}
+.text-overline {
+  font-family: var(--font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 600;
+}
+
+/* Graffiti wordmark stroke — sharper vector feel */
 .text-stroke-yellow {
   text-shadow:
     -2px -2px 0 #000,
      2px -2px 0 #000,
     -2px  2px 0 #000,
      2px  2px 0 #000,
-     0 0 20px rgba(255, 193, 7, 0.3);
+     0 0 16px rgba(255, 193, 7, 0.22);
 }
 
-/* Cell found pulse */
+/* ═══════════════════════════════════════════════════════
+   Animations & micro-interactions
+   ═══════════════════════════════════════════════════════ */
+
+/* Cell found pulse — subtler than before */
 .cell-found {
-  animation: cellPulse 0.35s ease-out;
+  animation: cellPulse 0.35s var(--ease-bounce);
 }
 @keyframes cellPulse {
-  0% { transform: scale(1.25); filter: brightness(1.4); }
+  0%   { transform: scale(1.2); filter: brightness(1.35); }
+  60%  { transform: scale(1.04); filter: brightness(1.08); }
   100% { transform: scale(1); filter: brightness(1); }
 }
 
-/* Knowledge card entrance */
+/* Card entrance — slide up + fade */
 @keyframes cardSlideUp {
   from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 .card-enter {
-  animation: cardSlideUp 0.35s ease-out;
+  animation: cardSlideUp 0.35s var(--ease-smooth);
 }
 
-/* Score floating animation */
+/* Staggered children entrance — used in stats grids */
+.stagger-in > * {
+  animation: cardSlideUp 0.4s var(--ease-smooth) both;
+}
+.stagger-in > *:nth-child(1) { animation-delay: 0.04s; }
+.stagger-in > *:nth-child(2) { animation-delay: 0.08s; }
+.stagger-in > *:nth-child(3) { animation-delay: 0.12s; }
+.stagger-in > *:nth-child(4) { animation-delay: 0.16s; }
+.stagger-in > *:nth-child(5) { animation-delay: 0.20s; }
+.stagger-in > *:nth-child(6) { animation-delay: 0.24s; }
+
+/* Floating score */
 @keyframes scoreFloat {
-  0% { opacity: 1; transform: translateY(0) scale(1); }
+  0%   { opacity: 1; transform: translateY(0) scale(1); }
+  60%  { opacity: 1; transform: translateY(-28px) scale(1.15); }
   100% { opacity: 0; transform: translateY(-48px) scale(1.2); }
 }
 .animate-score-float {
-  animation: scoreFloat 0.7s ease-out forwards;
+  animation: scoreFloat 0.8s var(--ease-smooth) forwards;
 }
 
 /* Particle burst */
 @keyframes particle {
-  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  0%   { transform: translate(0,0) scale(1); opacity: 1; }
   100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
 }
 
-/* Glowing outline for interaction */
+/* Glow outline for selected cells — softer now */
 @keyframes glowPulse {
-  0%, 100% { box-shadow: 0 0 6px rgba(255, 193, 7, 0.15); }
-  50% { box-shadow: 0 0 16px rgba(255, 193, 7, 0.35); }
+  0%, 100% { box-shadow: 0 0 6px rgba(255,193,7,0.18); }
+  50%      { box-shadow: 0 0 14px rgba(255,193,7,0.30); }
 }
 .cell-selected-glow {
-  animation: glowPulse 1s ease-in-out infinite;
+  animation: glowPulse 1.2s var(--ease-in-out) infinite;
 }
 
-/* Splash loading bar shimmer */
+/* Shimmer (splash loading bar) */
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
+  0%   { background-position: -200% 0; }
   100% { background-position: 200% 0; }
+}
+
+/* ──────── Button 3D tactile feel ──────── */
+.btn-3d {
+  position: relative;
+  transition: transform 0.08s var(--ease-smooth),
+              filter 0.12s var(--ease-smooth),
+              box-shadow 0.08s var(--ease-smooth);
+}
+.btn-3d:active:not(:disabled) {
+  transform: translateY(2px);
+}
+.btn-3d:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: saturate(0.5);
+}
+
+/* Squircle-like radius (mimics iOS) */
+.squircle {
+  border-radius: var(--radius-squircle);
+}
+
+/* Safe area insets — mobile notches */
+.safe-area-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }

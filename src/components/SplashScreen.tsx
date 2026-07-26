@@ -32,19 +32,18 @@ export default function SplashScreen({ onFinish }: { onFinish: () => void }) {
       {/* "JUEGA HIP HOP" tag */}
       <p className="text-[10px] text-text-muted uppercase tracking-[0.2em] mb-3">JUEGA HIP HOP</p>
 
-      {/* Graffiti-style logo */}
+      {/* Graffiti-style logo — KNOWLEDGE (no double-W typo) */}
       <div className="text-center mb-2">
         <div className="relative inline-block">
-          <h1 className="font-graffiti text-4xl md:text-5xl leading-none tracking-wide text-white/90">
+          <h1 className="text-display text-4xl md:text-5xl leading-none tracking-wide text-white/90">
             SOPA DE
           </h1>
           <div className="flex items-center justify-center">
-            <span className="font-graffiti text-4xl md:text-6xl leading-none text-yellow-neon text-stroke-yellow tracking-wide">KNOW</span>
+            <span className="text-display text-4xl md:text-6xl leading-none text-yellow-neon text-stroke-yellow tracking-wide">KNOW</span>
             <span className="relative inline-flex items-center">
-              <span className="font-graffiti text-4xl md:text-6xl leading-none text-yellow-neon text-stroke-yellow tracking-wide">W</span>
-              <span className="absolute -top-5 -right-1 text-lg md:text-xl drop-shadow-lg">👑</span>
+              <span className="text-display text-4xl md:text-6xl leading-none text-yellow-neon text-stroke-yellow tracking-wide">LEDGE</span>
+              <span className="absolute -top-4 -right-2 text-base md:text-lg drop-shadow-lg" aria-hidden="true">👑</span>
             </span>
-            <span className="font-graffiti text-4xl md:text-6xl leading-none text-yellow-neon text-stroke-yellow tracking-wide">LEDGE</span>
           </div>
         </div>
       </div>
