@@ -11,6 +11,8 @@ import { ACHIEVEMENTS } from './data/achievements'
 import { getRank } from './game/progression'
 import { DAILY_REWARDS } from './game/economy'
 import { RANKS } from './game/ranks'
+import { Button, Card, Chip, Progress, ScreenHeader, CounterDisplay } from './components/ui'
+import { IconBook, IconCart, IconStar, IconForward } from './components/icons'
 
 /* ─── Store Screen (enhanced with functional purchases) ─── */
 
@@ -26,68 +28,67 @@ export function StoreScreen({ progress, onBack, onBuy }: {
     { type: 'eliminate' as PowerUpType, name: 'Eliminar Letras', desc: '1 eliminación', count: 1, price: 20 },
     { type: 'freeze' as PowerUpType, name: 'Congelar Tiempo', desc: '1 congelación', count: 1, price: 25 },
   ]
+  const powerUpIcon = (type: PowerUpType) =>
+    type === 'hint' ? '💡' : type === 'reveal' ? '👁️' : type === 'shuffle' ? '🔀' : type === 'freeze' ? '❄️' : '🗑️'
+  const powerUpHelp = (type: PowerUpType) =>
+    type === 'hint' ? 'Destella primera letra' : type === 'reveal' ? 'Muestra posición' : type === 'shuffle' ? 'Reordena letras' : type === 'freeze' ? 'Pausa 15s' : 'Elimina letras'
+
   return (
     <div className="flex-1 flex flex-col overflow-y-auto bg-bg-primary">
-      <div className="bg-bg-card border-b border-border-subtle">
-        <div className="max-w-lg mx-auto w-full flex items-center justify-between px-4 py-3">
-          <button onClick={onBack} className="flex items-center gap-1 text-sm text-text-muted hover:text-white transition-colors">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-            Volver
-          </button>
-          <h2 className="font-heading text-base text-white uppercase tracking-wider">Tienda</h2>
-          <span className="flex items-center gap-1 text-yellow-neon font-bold text-xs">
-            <span>🪙</span> {progress.coins?.toLocaleString() || '0'}
-          </span>
-        </div>
-      </div>
+      <ScreenHeader
+        title="Tienda"
+        onBack={onBack}
+        right={<CounterDisplay icon={<IconCart size={14} />} value={progress.coins?.toLocaleString() || '0'} />}
+      />
       <div className="px-4 py-5 max-w-lg mx-auto w-full space-y-5 pb-24">
         {/* Power-ups */}
         <div>
-          <h3 className="text-[10px] uppercase tracking-[0.15em] text-text-muted font-semibold mb-3">Power-Ups</h3>
+          <h3 className="text-overline text-[10px] text-text-muted mb-3">Power-Ups</h3>
           <div className="space-y-2.5">
             {hintPacks.map(pack => (
-              <div key={pack.type} className="bg-bg-card rounded-xl border border-border-card p-4 flex items-center justify-between">
+              <Card key={pack.type} className="px-4 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <span className="text-xl">{pack.type === 'hint' ? '💡' : pack.type === 'reveal' ? '👁️' : pack.type === 'shuffle' ? '🔀' : pack.type === 'freeze' ? '❄️' : '🗑️'}</span>
+                  <span className="text-xl">{powerUpIcon(pack.type)}</span>
                   <div>
                     <div className="text-sm font-bold text-white">{pack.name}</div>
-                    <div className="text-[10px] text-text-muted">{pack.desc} · {pack.type === 'hint' ? 'Destella primera letra' : pack.type === 'reveal' ? 'Muestra posición' : pack.type === 'shuffle' ? 'Reordena letras' : pack.type === 'freeze' ? 'Pausa 15s' : 'Elimina letras'}</div>
+                    <div className="text-[10px] text-text-muted">{pack.desc} · {powerUpHelp(pack.type)}</div>
                   </div>
                 </div>
-                <button
+                <Button
+                  size="sm"
+                  variant={(progress.coins ?? 0) >= pack.price ? 'primary' : 'ghost'}
                   onClick={() => onBuy(pack.type)}
                   disabled={(progress.coins ?? 0) < pack.price}
-                  className={`text-xs font-bold px-4 py-2 rounded-lg transition-all ${(progress.coins ?? 0) >= pack.price ? 'bg-yellow-neon text-black hover:brightness-110' : 'bg-white/10 text-text-muted'}`}
                 >
                   🪙 {pack.price}
-                </button>
-              </div>
+                </Button>
+              </Card>
             ))}
           </div>
         </div>
 
         {/* Inventory */}
-        <div className="bg-bg-card rounded-xl border border-border-card p-4">
-          <h3 className="text-[10px] uppercase tracking-[0.15em] text-text-muted font-semibold mb-3">Tu Inventario</h3>
+        <Card className="px-4 py-4">
+          <h3 className="text-overline text-[10px] text-text-muted mb-3">Tu Inventario</h3>
           <div className="flex gap-2 flex-wrap">
             {(['hint', 'reveal', 'shuffle', 'freeze', 'eliminate'] as PowerUpType[]).map(type => (
               <div key={type} className="bg-bg-elevated/60 rounded-lg px-3 py-2 border border-border-card text-center min-w-[60px]">
-                <div className="text-lg">{type === 'hint' ? '💡' : type === 'reveal' ? '👁️' : type === 'shuffle' ? '🔀' : type === 'freeze' ? '❄️' : '🗑️'}</div>
+                <div className="text-lg">{powerUpIcon(type)}</div>
                 <div className="text-[10px] text-white font-bold">×{progress.powerUps?.[type] ?? 0}</div>
               </div>
             ))}
           </div>
-        </div>
+        </Card>
 
         {/* Support */}
-        <div className="bg-bg-card rounded-xl border border-yellow-neon/20 p-4 text-center">
+        <Card className="px-4 py-4 text-center" glow="yellow">
           <div className="text-3xl mb-2">👑</div>
-          <h3 className="font-heading text-sm text-yellow-neon uppercase tracking-wider">Apoya JuegaHipHop</h3>
+          <h3 className="text-heading text-sm text-yellow-neon uppercase tracking-wider">Apoya JuegaHipHop</h3>
           <p className="text-[10px] text-text-muted mt-1 mb-3">Ayúdanos a seguir creando contenido gratuito</p>
-          <button className="bg-gradient-to-r from-yellow-neon to-purple-neon text-black text-xs font-bold px-6 py-2 rounded-lg hover:brightness-110 transition-all uppercase tracking-wider">
+          <Button size="sm" className="bg-gradient-to-r from-yellow-neon to-purple-neon text-black shadow-none hover:brightness-110">
             Apoyar
-          </button>
-        </div>
+          </Button>
+        </Card>
       </div>
     </div>
   )
@@ -121,23 +122,16 @@ export function ChallengesScreen({ progress, onBack, onClaimDaily }: {
 
   return (
     <div className="flex-1 flex flex-col overflow-y-auto bg-bg-primary">
-      <div className="bg-bg-card border-b border-border-subtle">
-        <div className="max-w-lg mx-auto w-full flex items-center justify-between px-4 py-3">
-          <button onClick={onBack} className="flex items-center gap-1 text-sm text-text-muted hover:text-white transition-colors">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-            Volver
-          </button>
-          <h2 className="font-heading text-base text-white uppercase tracking-wider">Desafíos</h2>
-          <span className="flex items-center gap-1 text-orange-400 font-bold text-xs">
-            🔥 {progress.dailyStreak}
-          </span>
-        </div>
-      </div>
+      <ScreenHeader
+        title="Desafíos"
+        onBack={onBack}
+        right={<CounterDisplay icon={<IconStar size={14} />} value={progress.dailyStreak} color="text-orange-400" />}
+      />
       <div className="px-4 py-5 max-w-lg mx-auto w-full space-y-4 pb-24">
 
         {/* Daily Rewards Calendar */}
-        <div className="bg-bg-card rounded-xl border border-border-card p-4">
-          <h3 className="text-[10px] uppercase tracking-[0.15em] text-text-muted font-semibold mb-3 text-center">Recompensa Diaria</h3>
+        <Card className="px-4 py-4">
+          <h3 className="text-overline text-[10px] text-text-muted mb-3 text-center">Recompensa Diaria</h3>
           <div className="flex justify-center gap-1.5">
             {Array.from({ length: 7 }, (_, i) => {
               const reward = DAILY_REWARDS.find(r => r.day === i + 1) ?? DAILY_REWARDS[0]
@@ -153,31 +147,33 @@ export function ChallengesScreen({ progress, onBack, onClaimDaily }: {
               )
             })}
           </div>
-          <button
+          <Button
+            fullWidth
+            variant={claimed ? 'ghost' : 'primary'}
             onClick={handleClaim}
             disabled={claimed}
-            className={`w-full mt-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${claimed ? 'bg-white/5 text-text-muted' : 'bg-yellow-neon text-black hover:brightness-110'}`}
+            className="mt-3"
           >
             {claimed ? 'Reclamado ✓' : '¡Reclamar!'}
-          </button>
+          </Button>
           {rewardMsg && (
             <p className="text-[10px] text-center mt-2 text-yellow-neon font-bold animate-pulse">{rewardMsg}</p>
           )}
-        </div>
+        </Card>
 
         {/* Streak info */}
-        <div className="bg-bg-card rounded-xl border border-border-card p-4 text-center">
+        <Card className="px-4 py-4 text-center">
           <div className="text-3xl mb-2">🔥</div>
           <h3 className="text-sm font-bold text-white">Racha de {progress.dailyStreak} días</h3>
           <p className="text-[10px] text-text-muted mt-1">¡Sigue así para multiplicar tu XP!</p>
           <div className="flex justify-center gap-2 mt-3">
             {[3, 7, 14, 30].map(m => (
-              <div key={m} className={`text-[8px] px-2 py-1 rounded-full ${progress.dailyStreak >= m ? 'bg-yellow-neon/20 text-yellow-neon border border-yellow-neon/30' : 'bg-white/5 text-text-muted border border-border-subtle'}`}>
+              <Chip key={m} active={progress.dailyStreak >= m}>
                 {m}d{progress.dailyStreak >= m ? ' ✓' : ''}
-              </div>
+              </Chip>
             ))}
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   )
@@ -200,19 +196,10 @@ export function ModesScreen({ onBack, onSelect }: { onBack: () => void; onSelect
   ]
   return (
     <div className="flex-1 flex flex-col overflow-y-auto bg-bg-primary">
-      <div className="bg-bg-card border-b border-border-subtle">
-        <div className="max-w-lg mx-auto w-full flex items-center justify-between px-4 py-3">
-          <button onClick={onBack} className="flex items-center gap-1 text-sm text-text-muted hover:text-white transition-colors">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-            Volver
-          </button>
-          <h2 className="font-heading text-base text-white uppercase tracking-wider">Modos de Juego</h2>
-          <div className="w-16" />
-        </div>
-      </div>
+      <ScreenHeader title="Modos de Juego" onBack={onBack} />
       <div className="px-4 py-5 max-w-lg mx-auto w-full space-y-2.5 pb-24">
         {modes.map(m => (
-          <button key={m.id} onClick={() => onSelect(m.id)} className="w-full bg-bg-card rounded-xl border border-border-card p-4 flex items-center gap-3.5 hover:bg-white/5 transition-all text-left">
+          <button key={m.id} onClick={() => onSelect(m.id)} className="w-full bg-bg-card rounded-xl border border-border-card p-4 flex items-center gap-3.5 hover:bg-white/5 transition-all text-left btn-3d">
             <div className="w-12 h-12 rounded-xl flex items-center justify-center text-xl flex-shrink-0" style={{ background: `${m.color}22` }}>
               <span>{m.icon}</span>
             </div>
@@ -220,7 +207,7 @@ export function ModesScreen({ onBack, onSelect }: { onBack: () => void; onSelect
               <div className="text-sm font-bold text-white">{m.name}</div>
               <div className="text-[10px] text-text-muted mt-0.5">{m.desc}</div>
             </div>
-            <svg className="w-4 h-4 text-text-muted flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+            <IconForward size={18} className="text-text-muted flex-shrink-0" />
           </button>
         ))}
       </div>
@@ -241,16 +228,7 @@ export function StoryScreen({ onBack }: { onBack: () => void }) {
   ]
   return (
     <div className="flex-1 flex flex-col overflow-y-auto bg-bg-primary">
-      <div className="bg-bg-card border-b border-border-subtle">
-        <div className="max-w-lg mx-auto w-full flex items-center justify-between px-4 py-3">
-          <button onClick={onBack} className="flex items-center gap-1 text-sm text-text-muted hover:text-white transition-colors">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-            Volver
-          </button>
-          <h2 className="font-heading text-base text-white uppercase tracking-wider">Modo Historia</h2>
-          <div className="w-16" />
-        </div>
-      </div>
+      <ScreenHeader title="Modo Historia" onBack={onBack} />
       <div className="px-4 py-5 max-w-lg mx-auto w-full space-y-1 pb-24">
         {eras.map((era, i) => (
           <div key={era.year} className="flex items-start gap-4 relative">
@@ -261,7 +239,7 @@ export function StoryScreen({ onBack }: { onBack: () => void }) {
               {i < eras.length - 1 && <div className="w-0.5 flex-1 min-h-[24px] bg-border-subtle" />}
             </div>
             <div className={`flex-1 pb-4 ${!era.unlocked ? 'opacity-40' : ''}`}>
-              <div className={`bg-bg-card rounded-xl border p-3.5 ${era.current ? 'border-yellow-neon/30' : 'border-border-card'}`}>
+              <Card className={`px-3.5 py-3.5 ${era.current ? 'border-yellow-neon/30' : ''}`} glow={era.current ? 'yellow' : undefined}>
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center gap-2">
                     <span className="text-lg">{era.icon}</span>
@@ -274,11 +252,11 @@ export function StoryScreen({ onBack }: { onBack: () => void }) {
                 </div>
                 <p className="text-[10px] text-text-muted">{era.desc}</p>
                 {era.unlocked && (
-                  <button className="mt-2 text-[10px] bg-white/5 hover:bg-white/10 px-3 py-1 rounded-lg text-text-secondary transition-colors uppercase tracking-wider">
+                  <button className="mt-2 text-[10px] bg-white/5 hover:bg-white/10 px-3 py-1 rounded-lg text-text-secondary transition-colors uppercase tracking-wider btn-3d">
                     Jugar
                   </button>
                 )}
-              </div>
+              </Card>
             </div>
           </div>
         ))}
@@ -311,16 +289,11 @@ export function CollectionScreen({ progress, onBack }: { progress: PlayerProgres
 
   return (
     <div className="flex-1 flex flex-col overflow-y-auto bg-bg-primary">
-      <div className="bg-bg-card border-b border-border-subtle">
-        <div className="max-w-lg mx-auto w-full flex items-center justify-between px-4 py-3">
-          <button onClick={onBack} className="flex items-center gap-1 text-sm text-text-muted hover:text-white transition-colors">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-            Volver
-          </button>
-          <h2 className="font-heading text-base text-white uppercase tracking-wider">Mi Knowledge</h2>
-          <span className="text-[10px] text-yellow-neon font-bold">{progress.totalWordsFound}/{allWords.length}</span>
-        </div>
-      </div>
+      <ScreenHeader
+        title="Mi Knowledge"
+        onBack={onBack}
+        right={<CounterDisplay icon={<IconBook size={14} />} value={`${progress.totalWordsFound}/${allWords.length}`} />}
+      />
 
       {/* Tabs */}
       <div className="border-b border-border-subtle">
@@ -339,7 +312,6 @@ export function CollectionScreen({ progress, onBack }: { progress: PlayerProgres
           {categories.map(cat => {
             const found = progress.wordsFound.filter(fw => fw.category === cat.id).length
             const total = allWords.filter(w => w.category === cat.id).length
-            const pct = total > 0 ? Math.round((found / total) * 100) : 0
             const unlocked = progress.unlockedCategories.includes(cat.id)
 
             if (!unlocked && tab !== 'todos') return null
@@ -368,18 +340,16 @@ export function CollectionScreen({ progress, onBack }: { progress: PlayerProgres
                   {!unlocked && <span className="text-[9px] text-text-muted">🔒 Nivel {cat.unlockLevel}</span>}
                 </button>
                 {unlocked && (
-                  <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden mb-1.5">
-                    <div className="h-full rounded-full transition-all duration-500" style={{ width: `${pct}%`, background: cat.color }} />
-                  </div>
+                  <Progress value={found} max={total || 1} height="sm" color={cat.color} className="mb-1.5" />
                 )}
                 {isExpanded && unlocked && (
                   <div className="flex flex-wrap gap-1.5 mb-2">
                     {words.map(word => {
-                      const found = progress.wordsFound.some(fw => fw.word === word)
+                      const isFound = progress.wordsFound.some(fw => fw.word === word)
                       return (
-                        <span key={word} className={`text-[9px] px-2 py-0.5 rounded-full border transition-colors ${found ? 'bg-yellow-neon/10 border-yellow-neon/30 text-yellow-neon font-bold' : 'bg-white/5 border-border-subtle text-text-muted'}`}>
-                          {found ? '✓ ' : ''}{word}
-                        </span>
+                        <Chip key={word} active={isFound} className="text-[9px] px-2 py-0.5">
+                          {isFound ? '✓ ' : ''}{word}
+                        </Chip>
                       )
                     })}
                   </div>
@@ -404,7 +374,6 @@ export function CollectionScreen({ progress, onBack }: { progress: PlayerProgres
 /* ─── Enhanced Profile Screen ─── */
 
 export function ProfileScreen({ progress, stats }: { progress: PlayerProgress; stats: GameStats }) {
-  const pct = stats.xpForNext > 0 ? Math.min(100, (stats.currentXp / stats.xpForNext) * 100) : 100
   const rank = getRank(progress.xp)
   const nextRank = RANKS.find(r => r.xpRequired > progress.xp)
   const rankProgress = nextRank ? Math.min(100, Math.round(((progress.xp - rank.xpRequired) / (nextRank.xpRequired - rank.xpRequired)) * 100)) : 100
@@ -415,7 +384,7 @@ export function ProfileScreen({ progress, stats }: { progress: PlayerProgress; s
     <div className="flex-1 overflow-y-auto px-4 pb-24 pt-4">
       <div className="max-w-lg mx-auto w-full">
         {/* Profile Card */}
-        <div className="bg-bg-card rounded-2xl border border-border-card overflow-hidden mb-4">
+        <Card className="overflow-hidden mb-4" glow="purple">
           {/* Avatar & Rank banner */}
           <div className="relative pt-6 pb-4 px-5 text-center" style={{ background: `linear-gradient(180deg, ${rank.color}22, transparent)` }}>
             <div className="w-16 h-16 rounded-full mx-auto mb-2 flex items-center justify-center text-3xl shadow-lg" style={{ background: `linear-gradient(135deg, ${rank.color}, transparent)` }}>
@@ -424,34 +393,30 @@ export function ProfileScreen({ progress, stats }: { progress: PlayerProgress; s
             <h2 className="font-bold text-base text-white">{progress.profile.displayName}</h2>
             <div className="flex items-center justify-center gap-1.5 mt-1">
               <span style={{ color: rank.color }}>{rank.icon}</span>
-              <span className="text-[10px] uppercase tracking-wider font-bold" style={{ color: rank.color }}>{rank.name}</span>
+              <span className="text-overline text-[10px] font-bold" style={{ color: rank.color }}>{rank.name}</span>
             </div>
           </div>
 
           {/* Level & XP */}
           <div className="px-5 py-3">
             <div className="flex items-center justify-between mb-1">
-              <span className="font-heading text-base text-white">NIVEL {stats.level}</span>
+              <span className="text-heading text-base text-white">NIVEL {stats.level}</span>
               <span className="text-[10px] text-text-muted">{stats.xpInCurrentLevel} / {stats.xpForNext} XP</span>
             </div>
-            <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
-              <div className="h-full rounded-full transition-all duration-500" style={{ width: `${pct}%`, background: `linear-gradient(90deg, ${rank.color}, ${rank.color}88)` }} />
-            </div>
+            <Progress value={stats.currentXp} max={stats.xpForNext || 1} color={`linear-gradient(90deg, ${rank.color}, ${rank.color}88)`} />
           </div>
 
           {/* Rank Progress */}
           {nextRank && (
             <div className="px-5 pb-4">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-[8px] uppercase tracking-wider text-text-muted">Próximo rango: {nextRank.name}</span>
+                <span className="text-overline text-[8px] text-text-muted">Próximo rango: {nextRank.name}</span>
                 <span className="text-[8px] text-text-muted">{rankProgress}%</span>
               </div>
-              <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-                <div className="h-full rounded-full transition-all" style={{ width: `${rankProgress}%`, background: nextRank.color }} />
-              </div>
+              <Progress value={rankProgress} max={100} height="sm" color={nextRank.color} />
             </div>
           )}
-        </div>
+        </Card>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-3 gap-2.5 mb-4">
@@ -465,15 +430,15 @@ export function ProfileScreen({ progress, stats }: { progress: PlayerProgress; s
           ].map(s => (
             <div key={s.label} className="bg-bg-card rounded-xl p-3 text-center border border-border-card">
               <div className="text-lg mb-0.5">{s.icon}</div>
-              <div className="font-heading text-base text-yellow-neon">{s.value}</div>
-              <div className="text-[8px] text-text-muted uppercase tracking-wider mt-0.5">{s.label}</div>
+              <div className="text-heading text-base text-yellow-neon">{s.value}</div>
+              <div className="text-overline text-[8px] text-text-muted mt-0.5">{s.label}</div>
             </div>
           ))}
         </div>
 
         {/* Achievements */}
-        <div className="bg-bg-card rounded-2xl border border-border-card p-4 mb-4">
-          <h3 className="text-xs font-bold text-text-muted mb-3 uppercase tracking-wider">Logros ({completedAch}/{totalAch})</h3>
+        <Card className="px-4 py-4 mb-4">
+          <h3 className="text-overline text-[10px] text-text-muted mb-3">Logros ({completedAch}/{totalAch})</h3>
           <div className="grid grid-cols-5 gap-2">
             {ACHIEVEMENTS.slice(0, 20).map(a => {
               const prog = progress.achievements.find(ap => ap.id === a.id)
@@ -489,16 +454,15 @@ export function ProfileScreen({ progress, stats }: { progress: PlayerProgress; s
           {ACHIEVEMENTS.length > 20 && (
             <p className="text-[9px] text-text-muted text-center mt-2">+{ACHIEVEMENTS.length - 20} logros más</p>
           )}
-        </div>
+        </Card>
 
         {/* Category Completion */}
-        <div className="bg-bg-card rounded-2xl border border-border-card p-4">
-          <h3 className="text-xs font-bold text-text-muted mb-3 uppercase tracking-wider">Progreso por Categoría</h3>
+        <Card className="px-4 py-4">
+          <h3 className="text-overline text-[10px] text-text-muted mb-3">Progreso por Categoría</h3>
           <div className="space-y-2.5">
             {categories.filter(c => progress.unlockedCategories.includes(c.id)).map(cat => {
               const found = progress.wordsFound.filter(fw => fw.category === cat.id).length
               const total = allWords.filter(w => w.category === cat.id).length
-              const pct = total > 0 ? Math.round((found / total) * 100) : 0
               return (
                 <div key={cat.id} className="flex items-center gap-2">
                   <span className="text-base flex-shrink-0">{cat.icon}</span>
@@ -507,15 +471,13 @@ export function ProfileScreen({ progress, stats }: { progress: PlayerProgress; s
                       <span className="text-[10px] font-semibold text-white truncate" style={{ color: cat.color }}>{cat.name}</span>
                       <span className="text-[8px] text-text-muted flex-shrink-0 ml-2">{found}/{total}</span>
                     </div>
-                    <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-                      <div className="h-full rounded-full transition-all duration-500" style={{ width: `${pct}%`, background: cat.color }} />
-                    </div>
+                    <Progress value={found} max={total || 1} height="sm" color={cat.color} />
                   </div>
                 </div>
               )
             })}
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   )
@@ -530,18 +492,9 @@ export function SettingsScreen({ onBack }: { onBack: () => void }) {
 
   return (
     <div className="flex-1 flex flex-col overflow-y-auto bg-bg-primary">
-      <div className="bg-bg-card border-b border-border-subtle">
-        <div className="max-w-lg mx-auto w-full flex items-center justify-between px-4 py-3">
-          <button onClick={onBack} className="flex items-center gap-1 text-sm text-text-muted hover:text-white transition-colors">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-            Volver
-          </button>
-          <h2 className="font-heading text-base text-white uppercase tracking-wider">Opciones</h2>
-          <div className="w-16" />
-        </div>
-      </div>
+      <ScreenHeader title="Opciones" onBack={onBack} />
       <div className="px-4 py-5 max-w-lg mx-auto w-full space-y-4 pb-24">
-        <div className="bg-bg-card rounded-xl border border-border-card overflow-hidden">
+        <Card className="overflow-hidden">
           {[
             { label: 'Sonido', icon: '🔊', value: soundOn, set: setSoundOn },
             { label: 'Música', icon: '🎵', value: musicOn, set: setMusicOn },
@@ -554,17 +507,17 @@ export function SettingsScreen({ onBack }: { onBack: () => void }) {
               </div>
               <button
                 onClick={() => s.set(!s.value)}
-                className={`w-12 h-6 rounded-full transition-colors relative ${s.value ? 'bg-yellow-neon' : 'bg-white/10'}`}
+                className={`w-12 h-6 rounded-full transition-colors relative btn-3d ${s.value ? 'bg-yellow-neon' : 'bg-white/10'}`}
               >
                 <div className={`w-5 h-5 rounded-full bg-white absolute top-0.5 transition-transform ${s.value ? 'translate-x-6' : 'translate-x-0.5'}`} />
               </button>
             </div>
           ))}
-        </div>
-        <div className="bg-bg-card rounded-xl border border-border-card p-4 text-center">
+        </Card>
+        <Card className="px-4 py-4 text-center">
           <p className="text-xs text-text-muted">Sopa de Knowledge v1.0</p>
           <p className="text-[9px] text-text-muted mt-1">© 2026 JuegaHipHop</p>
-        </div>
+        </Card>
       </div>
     </div>
   )
@@ -575,11 +528,15 @@ export function SettingsScreen({ onBack }: { onBack: () => void }) {
 export function AchievementNotification({ achievements, onClose }: { achievements: Achievement[]; onClose: () => void }) {
   if (achievements.length === 0) return null
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-      <div className="bg-bg-card rounded-2xl border border-yellow-neon/30 max-w-sm w-full card-enter overflow-hidden">
-        <div className="px-5 pt-5 pb-3 text-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={onClose}>
+      <div
+        className="card-enter relative max-w-sm w-full rounded-2xl overflow-hidden border border-yellow-neon/30 bg-bg-card shadow-[0_24px_64px_rgba(0,0,0,0.45)]"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="absolute -inset-1 bg-gradient-to-b from-yellow-neon/15 to-transparent rounded-3xl pointer-events-none" />
+        <div className="relative px-5 pt-5 pb-3 text-center">
           <div className="text-3xl mb-2">🏆</div>
-          <h2 className="font-heading text-base text-yellow-neon uppercase tracking-wider mb-3">¡Nuevos Logros!</h2>
+          <h2 className="text-heading text-base text-yellow-neon uppercase tracking-wider mb-3">¡Nuevos Logros!</h2>
           <div className="space-y-2">
             {achievements.map(a => (
               <div key={a.id} className="bg-bg-elevated/60 rounded-xl p-3 flex items-center gap-3 border border-border-card text-left">
@@ -597,9 +554,9 @@ export function AchievementNotification({ achievements, onClose }: { achievement
             ))}
           </div>
         </div>
-        <button onClick={onClose} className="w-full py-3 bg-yellow-neon text-black font-heading text-sm uppercase tracking-wider hover:brightness-110 transition-all font-bold">
-          ¡Genial!
-        </button>
+        <div className="relative px-5 pb-5">
+          <Button variant="primary" fullWidth onClick={onClose}>¡Genial!</Button>
+        </div>
       </div>
     </div>
   )

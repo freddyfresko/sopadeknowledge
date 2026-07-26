@@ -30,7 +30,7 @@ import { syncToSupabase, syncFromSupabase, mergeProgress } from './lib/supabase-
 import { createLobbyClient } from './lib/sdk/lobby-client'
 import type { LobbyClientInstance } from './lib/sdk/lobby-client'
 import { Button, Card, Chip, Progress, ScreenHeader } from './components/ui'
-import { IconPlay, IconStar, IconBook, IconCart, IconHome, IconGrid, IconProfile } from './components/icons'
+import { IconPlay, IconStar, IconBook, IconCart, IconHome, IconGrid, IconProfile, IconHint, IconEye, IconShuffle, IconTrash } from './components/icons'
 
 /* ─── Direction snapping for mobile ─── */
 
@@ -226,25 +226,30 @@ function KnowledgeModal({ word, onClose }: { word: string | null; onClose: () =>
 function CategoryUnlock({ newCategories, onClose }: { newCategories: string[]; onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={onClose}>
-      <div className="bg-bg-card rounded-2xl border border-yellow-neon/30 p-6 max-w-sm w-full card-enter text-center" onClick={e => e.stopPropagation()}>
-        <div className="text-3xl mb-2">🎉</div>
-        <h2 className="font-heading text-lg mb-3 text-white">¡Nuevas Categorías!</h2>
-        <div className="space-y-2">
-          {newCategories.map(catId => {
-            const cat = getCategory(catId)
-            if (!cat) return null
-            return (
-              <div key={catId} className="bg-bg-elevated rounded-xl p-3 flex items-center gap-3 border border-border-card">
-                <span className="text-xl">{cat.icon}</span>
-                <div className="text-left">
-                  <div className="font-bold text-sm text-white">{cat.name}</div>
-                  <div className="text-xs text-text-muted">{cat.description}</div>
+      <div className="card-enter relative max-w-sm w-full rounded-2xl border border-yellow-neon/30 p-6 bg-bg-card text-center shadow-[0_24px_64px_rgba(0,0,0,0.45)]" onClick={e => e.stopPropagation()}>
+        <div className="absolute -inset-1 bg-gradient-to-b from-yellow-neon/15 to-transparent rounded-3xl pointer-events-none" />
+        <div className="relative">
+          <div className="text-3xl mb-2">🎉</div>
+          <h2 className="text-heading text-base mb-3 text-white uppercase tracking-wider">¡Nuevas categorías!</h2>
+          <div className="space-y-2 text-left">
+            {newCategories.map(catId => {
+              const cat = getCategory(catId)
+              if (!cat) return null
+              return (
+                <div key={catId} className="bg-bg-elevated/60 rounded-xl p-3 flex items-center gap-3 border border-border-card">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center text-xl flex-shrink-0" style={{ background: `${cat.color}22` }}>
+                    {cat.icon}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-bold text-sm" style={{ color: cat.color }}>{cat.name}</div>
+                    <div className="text-[11px] text-text-muted">{cat.description}</div>
+                  </div>
                 </div>
-              </div>
-            )
-          })}
+              )
+            })}
+          </div>
+          <Button variant="primary" fullWidth onClick={onClose} className="mt-4">¡A jugar!</Button>
         </div>
-        <button onClick={onClose} className="mt-4 w-full py-2.5 bg-yellow-neon hover:bg-yellow-neon-dark text-black font-bold rounded-xl text-sm transition-colors uppercase tracking-wider">¡A Jugar!</button>
       </div>
     </div>
   )
@@ -255,12 +260,15 @@ function CategoryUnlock({ newCategories, onClose }: { newCategories: string[]; o
 function LevelUpModal({ newLevel, onClose }: { newLevel: number; onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={onClose}>
-      <div className="bg-bg-card rounded-2xl border border-yellow-neon/30 p-6 max-w-sm w-full card-enter text-center" onClick={e => e.stopPropagation()}>
-        <div className="text-4xl mb-2">⬆️</div>
-        <h2 className="font-heading text-xl text-yellow-neon mb-1">¡SUBISTE DE NIVEL!</h2>
-        <div className="text-5xl font-graffiti text-white my-3 text-stroke-yellow">{newLevel}</div>
-        <p className="text-xs text-text-muted mb-4">Sigue así, tu conocimiento crece</p>
-        <button onClick={onClose} className="w-full py-2.5 bg-yellow-neon text-black font-bold rounded-xl text-sm transition-colors hover:brightness-110 uppercase tracking-wider">¡Sí!</button>
+      <div className="card-enter relative max-w-sm w-full rounded-2xl border border-yellow-neon/30 p-6 bg-bg-card text-center shadow-[0_24px_64px_rgba(0,0,0,0.45)]" onClick={e => e.stopPropagation()}>
+        <div className="absolute -inset-1 bg-gradient-to-b from-yellow-neon/15 to-transparent rounded-3xl pointer-events-none" />
+        <div className="relative">
+          <div className="text-4xl mb-2">⬆️</div>
+          <h2 className="text-heading text-base text-yellow-neon mb-1 uppercase tracking-wider">¡Subiste de nivel!</h2>
+          <div className="text-display text-6xl text-white my-3 text-stroke-yellow">{newLevel}</div>
+          <p className="text-sm text-text-secondary mb-4">Sigue así, tu conocimiento crece</p>
+          <Button variant="primary" fullWidth onClick={onClose}>¡Sí!</Button>
+        </div>
       </div>
     </div>
   )
@@ -353,31 +361,48 @@ function HintModal({ powerUps, onUseHint, onUseReveal, onUseShuffle, onUseElimin
   onUseHint: () => void; onUseReveal: () => void; onUseShuffle: () => void; onUseEliminate: () => void; onClose: () => void
 }) {
   const items = [
-    { label: 'PISTA', icon: '💡', desc: 'Destella primera letra', cost: 0, count: powerUps.hint ?? 0, action: onUseHint },
-    { label: 'REVELAR', icon: '👁️', desc: 'Muestra posición', cost: 0, count: powerUps.reveal ?? 0, action: onUseReveal },
-    { label: 'MEZCLAR', icon: '🔀', desc: 'Reordena letras', cost: 0, count: powerUps.shuffle ?? 0, action: onUseShuffle },
-    { label: 'ELIMINAR', icon: '🗑️', desc: 'Quita letras falsas', cost: 0, count: powerUps.eliminate ?? 0, action: onUseEliminate },
+    { label: 'Pista',   icon: <IconHint size={18} />,    desc: 'Destella primera letra', count: powerUps.hint ?? 0, action: onUseHint },
+    { label: 'Revelar', icon: <IconEye size={18} />,     desc: 'Muestra posición',       count: powerUps.reveal ?? 0, action: onUseReveal },
+    { label: 'Mezclar', icon: <IconShuffle size={18} />, desc: 'Reordena letras',       count: powerUps.shuffle ?? 0, action: onUseShuffle },
+    { label: 'Eliminar',icon: <IconTrash size={18} />,   desc: 'Quita letras falsas',   count: powerUps.eliminate ?? 0, action: onUseEliminate },
   ]
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 backdrop-blur-sm" onClick={onClose}>
-      <div className="bg-bg-card rounded-t-2xl border border-border-card w-full max-w-sm p-5 card-enter" onClick={e => e.stopPropagation()}>
-        <div className="flex items-center gap-2 mb-4">
-          <span className="text-lg">💡</span>
-          <h3 className="font-bold text-sm text-white">PISTAS</h3>
+      <div className="card-enter relative w-full max-w-sm rounded-t-2xl border border-border-card bg-bg-card pb-[env(safe-area-inset-bottom,0px)]" onClick={e => e.stopPropagation()}>
+        {/* Drag handle */}
+        <div className="flex justify-center pt-2.5 pb-1">
+          <span className="block w-10 h-1 rounded-full bg-white/20" />
         </div>
-        {items.map(h => (
-          <button key={h.label} disabled={h.count <= 0} onClick={h.action} className={`w-full flex items-center justify-between py-3 px-4 rounded-xl mb-2 transition-colors ${h.count > 0 ? 'bg-bg-elevated/60 hover:bg-white/10 border border-border-card' : 'bg-white/[0.02] border border-border-subtle opacity-40'}`}>
-            <div className="flex items-center gap-2">
-              <span>{h.icon}</span>
-              <div className="text-left">
-                <span className="text-sm font-semibold text-white block">{h.label}</span>
-                <span className="text-[8px] text-text-muted">{h.desc}</span>
-              </div>
-            </div>
-            <span className="text-xs text-text-muted">×{h.count}</span>
-          </button>
-        ))}
-        <p className="text-[9px] text-text-muted text-center mt-2">Compra más power-ups en la Tienda</p>
+        <div className="px-5 pb-5">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-yellow-neon"><IconHint size={20} /></span>
+            <h3 className="text-heading text-sm text-white uppercase tracking-wider">Pistas</h3>
+          </div>
+          <div className="space-y-2">
+            {items.map(h => {
+              const enabled = h.count > 0
+              return (
+                <button key={h.label} disabled={!enabled} onClick={h.action}
+                  className={[
+                    'w-full flex items-center justify-between py-3 px-4 rounded-xl transition-all',
+                    enabled
+                      ? 'bg-bg-elevated/60 hover:bg-white/10 border border-border-card btn-3d cursor-pointer'
+                      : 'bg-white/[0.02] border border-border-subtle opacity-40 cursor-not-allowed',
+                  ].join(' ')}>
+                  <div className="flex items-center gap-3">
+                    <span className={enabled ? 'text-yellow-neon' : 'text-text-muted'}>{h.icon}</span>
+                    <div className="text-left">
+                      <span className="text-sm font-semibold text-white block">{h.label}</span>
+                      <span className="text-[10px] text-text-muted">{h.desc}</span>
+                    </div>
+                  </div>
+                  <span className={`text-xs font-bold ${enabled ? 'text-yellow-neon' : 'text-text-muted'}`}>×{h.count}</span>
+                </button>
+              )
+            })}
+          </div>
+          <p className="text-overline text-[9px] text-text-muted text-center mt-3">Compra más power-ups en la Tienda</p>
+        </div>
       </div>
     </div>
   )
@@ -389,19 +414,27 @@ function GameOver({ foundCount, totalWords, mode, onRetry, onExit }: {
   foundCount: number; totalWords: number; mode: string
   onRetry: () => void; onExit: () => void
 }) {
+  const precision = totalWords > 0 ? Math.round((foundCount / totalWords) * 100) : 0
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
-      <div className="bg-bg-card rounded-2xl border border-red-500/30 max-w-sm w-full card-enter text-center p-6">
-        <div className="text-4xl mb-2">{mode === 'timed' ? '⏰' : '💀'}</div>
-        <h2 className="font-heading text-lg text-red-400 mb-2">
-          {mode === 'timed' ? '¡TIEMPO! ⏱️' : 'GAME OVER'}
-        </h2>
-        <p className="text-xs text-text-muted mb-4">
-          Encontraste {foundCount} de {totalWords} palabras
-        </p>
-        <div className="flex gap-3">
-          <button onClick={onRetry} className="flex-1 py-3 bg-yellow-neon text-black font-bold text-sm rounded-xl hover:brightness-110 uppercase tracking-wider">Reintentar</button>
-          <button onClick={onExit} className="flex-1 py-3 bg-white/10 text-white font-bold text-sm rounded-xl hover:bg-white/15 uppercase tracking-wider">Salir</button>
+      <div className="card-enter relative max-w-sm w-full rounded-2xl overflow-hidden border border-red-500/30 bg-bg-card shadow-[0_24px_64px_rgba(0,0,0,0.45)] text-center">
+        <div className="absolute -inset-1 bg-gradient-to-b from-red-500/10 to-transparent rounded-3xl pointer-events-none" />
+        <div className="relative px-6 pt-7 pb-5">
+          <div className="text-4xl mb-2">{mode === 'timed' ? '⏰' : '💀'}</div>
+          <h2 className="text-heading text-lg text-red-400 mb-1">
+            {mode === 'timed' ? '¡Tiempo!' : 'Game Over'}
+          </h2>
+          <p className="text-sm text-text-secondary mb-4">
+            Encontraste <span className="font-bold text-white">{foundCount}</span> de <span className="font-bold text-white">{totalWords}</span> palabras
+          </p>
+          <div className="inline-flex items-center gap-2 bg-bg-elevated/60 rounded-full px-4 py-1.5 border border-border-card mb-5">
+            <span className="text-overline text-[9px] text-text-muted">Precisión</span>
+            <span className="text-sm font-bold text-green-neon">{precision}%</span>
+          </div>
+        </div>
+        <div className="flex gap-2 px-5 pb-5">
+          <Button variant="primary" onClick={onRetry} className="flex-1">Reintentar</Button>
+          <Button variant="ghost" onClick={onExit} className="flex-1">Salir</Button>
         </div>
       </div>
     </div>
