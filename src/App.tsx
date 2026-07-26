@@ -441,7 +441,7 @@ function HomeScreen({ onPlay, onDaily, onKnowledge, onStore, progress, stats }: 
   progress: { dailyStreak: number }; stats: { level: number; wordsFound: number }
 }) {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center px-6 pb-20 pt-6">
+    <div className="flex-1 flex flex-col items-center justify-center px-6 pb-28 pt-6">
       <div className="text-center mb-2">
         <p className="text-overline text-[10px] text-text-muted mb-3">Juega Hip Hop</p>
       </div>
