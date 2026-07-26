@@ -165,50 +165,57 @@ function KnowledgeModal({ word, onClose }: { word: string | null; onClose: () =>
   const color = cat?.color ?? '#8E44AD'
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm" onClick={onClose}>
-      <div className="bg-bg-card rounded-2xl border border-border-card max-w-md w-full card-enter shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
-        <div className="flex items-center justify-between px-5 pt-4 pb-1">
-          <div className="flex items-center gap-2">
-            <span className="text-yellow-neon text-lg">👑</span>
-            <span className="font-heading text-white text-sm uppercase tracking-wider">¡BIEN!</span>
-          </div>
-          <span className="text-[9px] text-text-muted uppercase tracking-wider bg-white/5 px-2 py-0.5 rounded-full">{cat?.name ?? entry.category}</span>
-        </div>
-        <div className="mx-5 h-40 rounded-xl flex items-center justify-center overflow-hidden relative" style={{ background: `linear-gradient(135deg, ${color}44, ${color}11)` }}>
-          <span className="text-6xl opacity-50 drop-shadow-lg">{cat?.icon ?? '📖'}</span>
+      <div className="card-enter relative max-w-md w-full rounded-2xl overflow-hidden border border-border-card bg-bg-card shadow-[0_24px_64px_rgba(0,0,0,0.4)]" onClick={e => e.stopPropagation()}>
+        {/* Hero header con gradiente direccional */}
+        <div className="relative h-40 overflow-hidden flex items-center justify-center"
+             style={{ background: `linear-gradient(135deg, ${color}33 0%, ${color}08 60%, transparent 100%)` }}>
+          <div className="absolute inset-0" style={{ background: `radial-gradient(circle at 30% 30%, ${color}22, transparent 60%)` }} />
+          <span className="text-6xl drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] relative z-10">{cat?.icon ?? '📖'}</span>
           {cat && (
-            <div className="absolute top-2 left-2 bg-black/40 backdrop-blur-sm rounded-lg px-2 py-1 flex items-center gap-1">
-              <span className="text-xs">{cat.icon}</span>
-              <span className="text-[9px] text-white font-semibold uppercase tracking-wider">{cat.name}</span>
+            <div className="absolute top-3 left-3 rounded-full px-2.5 py-1 flex items-center gap-1.5 bg-black/40 backdrop-blur-sm border border-white/10">
+              <span className="text-sm">{cat.icon}</span>
+              <span className="text-[10px] text-white font-bold uppercase tracking-widest">{cat.name}</span>
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-bg-card/60 via-transparent to-transparent" />
-          <div className="absolute bottom-2 left-3 right-3">
-            <h2 className="font-graffiti text-2xl text-white drop-shadow-lg tracking-wide">{word}</h2>
+          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-bg-card via-bg-card/70 to-transparent" />
+          <div className="absolute bottom-3 left-5 right-5 flex items-baseline gap-2">
+            <span className="text-yellow-neon text-lg">👑</span>
+            <span className="text-overline text-[10px] text-yellow-neon">¡Bien!</span>
+            <h2 className="text-display text-2xl text-white tracking-wide drop-shadow-lg ml-auto">{word}</h2>
           </div>
         </div>
-        <div className="px-5 py-3">
-          <div className="bg-bg-elevated/60 rounded-xl p-3.5 mb-2.5">
-            <p className="text-sm text-white/80 leading-relaxed">{entry.knowledge.description}</p>
+
+        {/* Body */}
+        <div className="px-5 py-4 space-y-3">
+          <div className="rounded-xl p-3.5 bg-bg-elevated/60 border border-border-subtle">
+            <p className="text-sm text-text-primary leading-relaxed">{entry.knowledge.description}</p>
           </div>
-          <div className="rounded-xl p-3.5 mb-3 border" style={{ borderColor: `${color}33`, background: `${color}0D` }}>
-            <div className="text-[9px] uppercase tracking-widest mb-1 font-bold" style={{ color }}>¿POR QUÉ ES IMPORTANTE?</div>
-            <p className="text-xs text-white/70 leading-relaxed">{entry.knowledge.importance}</p>
+
+          <div className="rounded-xl p-3.5 border" style={{ borderColor: `${color}40`, background: `${color}0D` }}>
+            <div className="text-overline text-[9px] mb-1.5 font-bold" style={{ color }}>¿Por qué es importante?</div>
+            <p className="text-xs text-text-secondary leading-relaxed">{entry.knowledge.importance}</p>
           </div>
+
           {entry.knowledge.funFact && (
-            <div className="rounded-xl p-3 mb-3 bg-yellow-neon/10 border border-yellow-neon/20">
-              <div className="text-[9px] uppercase tracking-widest mb-1 font-bold text-yellow-neon">🤯 DATO CURIOSO</div>
-              <p className="text-xs text-white/70">{entry.knowledge.funFact}</p>
+            <div className="rounded-xl p-3.5 bg-yellow-neon/10 border border-yellow-neon/25">
+              <div className="text-overline text-[9px] mb-1.5 font-bold text-yellow-neon">🤯 Dato curioso</div>
+              <p className="text-xs text-text-secondary leading-relaxed">{entry.knowledge.funFact}</p>
             </div>
           )}
+
           {entry.knowledge.related && entry.knowledge.related.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mb-3">
+            <div className="flex flex-wrap gap-1.5">
               {entry.knowledge.related.map(r => (
                 <span key={r} className="text-[9px] uppercase tracking-wider bg-white/5 px-2 py-0.5 rounded-full text-text-muted border border-border-subtle">{r}</span>
               ))}
             </div>
           )}
         </div>
-        <button onClick={onClose} className="w-full py-3.5 bg-yellow-neon text-black font-heading text-sm tracking-wider hover:brightness-110 transition-all uppercase">CONTINUAR</button>
+
+        <button onClick={onClose}
+          className="w-full py-3.5 bg-yellow-neon text-black text-heading text-sm tracking-wider btn-3d hover:brightness-110 uppercase">
+          Continuar
+        </button>
       </div>
     </div>
   )
@@ -272,44 +279,68 @@ function LevelComplete({ foundCount, totalWords, elapsedSeconds, onNext, onSumma
   const timeStr = `${String(Math.floor(elapsedSeconds / 60)).padStart(2, '0')}:${String(elapsedSeconds % 60).padStart(2, '0')}`
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
-      <div className="bg-bg-card rounded-2xl border border-yellow-neon/20 max-w-sm w-full card-enter overflow-hidden shadow-2xl text-center">
-        <div className="px-6 pt-6 pb-3">
+      <div className="card-enter relative max-w-sm w-full rounded-2xl overflow-hidden border border-yellow-neon/20 bg-bg-card shadow-[0_24px_64px_rgba(0,0,0,0.45)] text-center">
+        {/* Glow background */}
+        <div className="absolute -inset-1 bg-gradient-to-b from-yellow-neon/10 to-transparent rounded-3xl pointer-events-none" />
+
+        <div className="relative px-6 pt-6 pb-3">
           <div className="flex items-center justify-center gap-2 mb-1">
             <span className="text-xl">👑</span>
-            <h2 className="font-heading text-base text-yellow-neon uppercase tracking-wider">¡Completado!</h2>
+            <h2 className="text-heading text-base text-yellow-neon uppercase tracking-wider">¡Completado!</h2>
             <span className="text-xl">👑</span>
           </div>
+
           <div className="relative mx-auto my-5 w-24 h-24">
             <div className="absolute inset-0 rounded-full bg-yellow-neon/10 animate-pulse" />
             <div className="absolute inset-2 rounded-full bg-yellow-neon/20" />
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-yellow-neon/30 to-purple-neon/20 flex items-center justify-center border-2 border-yellow-neon/40 shadow-lg shadow-yellow-neon/20">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-yellow-neon/30 to-purple-neon/20 flex items-center justify-center border-2 border-yellow-neon/40 shadow-[0_4px_20px_rgba(255,193,7,0.3)]">
                 <span className="text-2xl">{mode === 'timed' ? '⏱️' : mode === 'survival' ? '💪' : '📻'}</span>
               </div>
             </div>
           </div>
-          <div className="flex justify-center gap-3 mb-4">
-            <div className="bg-bg-elevated/60 rounded-xl px-3 py-2.5 border border-border-card">
-              <div className="text-[9px] text-text-muted uppercase tracking-wider mb-1">XP</div>
-              <div className="text-sm font-bold text-yellow-neon">+{earnedXp}</div>
+
+          {/* Stats grid — staggered in */}
+          <div className="grid grid-cols-3 gap-2 mb-4 stagger-in">
+            <div className="bg-bg-elevated/60 rounded-lg py-2.5 px-2 border border-border-card">
+              <div className="text-overline text-[8px] text-text-muted mb-1">XP</div>
+              <div className="text-base font-bold text-yellow-neon">+{earnedXp}</div>
             </div>
-            <div className="bg-bg-elevated/60 rounded-xl px-3 py-2.5 border border-border-card">
-              <div className="text-[9px] text-text-muted uppercase tracking-wider mb-1">Tiempo</div>
-              <div className="text-sm font-bold text-white">{timeStr}</div>
+            <div className="bg-bg-elevated/60 rounded-lg py-2.5 px-2 border border-border-card">
+              <div className="text-overline text-[8px] text-text-muted mb-1">Tiempo</div>
+              <div className="text-base font-bold text-white font-mono">{timeStr}</div>
             </div>
-            <div className="bg-bg-elevated/60 rounded-xl px-3 py-2.5 border border-border-card">
-              <div className="text-[9px] text-text-muted uppercase tracking-wider mb-1">Precisión</div>
-              <div className="text-sm font-bold text-green-neon">{precision}%</div>
+            <div className="bg-bg-elevated/60 rounded-lg py-2.5 px-2 border border-border-card">
+              <div className="text-overline text-[8px] text-text-muted mb-1">Precisión</div>
+              <div className="text-base font-bold text-green-neon">{precision}%</div>
             </div>
           </div>
-          <div className="flex justify-center gap-4 mb-1">
-            <div className="flex items-center gap-1.5 text-xs"><span className="text-yellow-neon text-lg">🪙</span><span className="text-white font-bold">+{earnedCoins}</span></div>
-            <div className="flex items-center gap-1.5 text-xs"><span className="text-purple-neon-light text-lg">💎</span><span className="text-white font-bold">+{earnedKnowledge}</span></div>
-            <div className="flex items-center gap-1.5 text-xs"><span className="text-yellow-neon text-lg">📖</span><span className="text-white font-bold">+{foundCount}</span></div>
+
+          {/* Reward chips */}
+          <div className="flex justify-center gap-4 mb-2">
+            <div className="flex items-center gap-1.5 text-sm">
+              <span className="text-yellow-neon text-lg">🪙</span>
+              <span className="text-white font-bold">+{earnedCoins}</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-sm">
+              <span className="text-purple-neon-light text-lg">💎</span>
+              <span className="text-white font-bold">+{earnedKnowledge}</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-sm">
+              <span className="text-yellow-neon text-lg">📖</span>
+              <span className="text-white font-bold">+{foundCount}</span>
+            </div>
           </div>
         </div>
-        <button onClick={onNext} className="w-full py-3.5 bg-yellow-neon text-black font-heading text-sm uppercase tracking-wider hover:brightness-110 transition-all font-bold">SIGUIENTE</button>
-        <button onClick={onSummary} className="w-full py-2.5 bg-white/5 text-text-muted text-xs hover:bg-white/10 transition-colors uppercase tracking-wider">Ver Colección</button>
+
+        <button onClick={onNext}
+          className="w-full py-3.5 bg-yellow-neon text-black text-heading text-sm uppercase tracking-wider btn-3d hover:brightness-110 font-bold">
+          Siguiente
+        </button>
+        <button onClick={onSummary}
+          className="w-full py-2.5 bg-white/5 text-text-secondary text-xs hover:bg-white/10 transition-colors uppercase tracking-wider">
+          Ver colección
+        </button>
       </div>
     </div>
   )
