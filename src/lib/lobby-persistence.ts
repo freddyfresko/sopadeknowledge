@@ -14,6 +14,7 @@
  */
 
 import type { PlayerProgress } from '../game/types'
+import { getLevel } from '../game/progression'
 import type { LobbyClientInstance } from './sdk/lobby-client'
 
 const GAME_ID = 'sopa'
@@ -52,9 +53,13 @@ function toSopaState(p: PlayerProgress): SopaState {
 }
 
 function fromSopaState(s: SopaState, bestScore?: number): PlayerProgress {
+  // El lobby guarda el estado opaco (SopaState) y el best_score (XP total).
+  // Recalculamos level desde xp con la curva de la sopa (getLevel),
+  // porque el level se deriva de xp, no se guarda como estado independiente.
+  const xp = bestScore ?? 0
   return {
-    xp: bestScore ?? 0,
-    level: 1, // El lobby es dueño de XP/level global; recálcula localmente si lo necesitas
+    xp,
+    level: getLevel(xp),
     wordsFound: s.wordsFound ?? [],
     unlockedCategories: s.unlockedCategories ?? [],
     dailyStreak: 0,
