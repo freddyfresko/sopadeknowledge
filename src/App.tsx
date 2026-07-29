@@ -781,6 +781,13 @@ export default function App() {
     // Lo guardamos para personalizar la UI (ProfileScreen muestra displayName
     // y avatar del lobby en vez del perfil local hardcodeado) y disparamos
     // la carga de progreso.
+    // Flag que bloquea el auto-save hasta que el progreso remoto
+    // se haya cargado (y mergedo) desde el lobby.  Esto evita que el
+    // juego suba su estado local (posiblemente incompleto o nivel 0)
+    // antes de haber leído lo que el lobby ya tiene guardado en Supabase,
+    // pisando el estado real del jugador.
+    let syncFromLobbyDone = false
+
     lobby.onSessionContext((ctx) => {
       console.log('[Sopa App] session_context recibido:', {
         userId: ctx.userId,
@@ -793,21 +800,43 @@ export default function App() {
 
       // Si el usuario es invitado, el lobby confirma guardados sin persistir.
       // El juego sigue funcionando con localStorage como cache local.
-      if (ctx.isGuest) return
+      if (ctx.isGuest) {
+        initialSyncDoneRef.current = true
+        syncFromLobbyDone = true
+        return
+      }
 
-      // Disparar carga del progreso remoto al recibir el contexto.
-      // El propio useEffect de sync más abajo también lo intenta al montar,
-      // pero con onSessionContext garantizamos que el lobby ya tiene sesión.
+      // Cargar el progreso remoto desde el lobby (Supabase) al recibir
+      // el contexto.  Este es el único punto desde donde disparamos la
+      // carga inicial, porque aquí el lobby ya terminó su handshake y
+      // garantizamos que lobbyRef.current existe.
       void (async () => {
-        const remote = await syncFromLobby(lobbyRef.current)
-        if (remote) {
-          const local = loadProgress()
-          const merged = mergeProgress(local, remote)
-          saveProgress(merged)
-          window.dispatchEvent(new CustomEvent('sopa-progress-sync', { detail: merged }))
+        try {
+          const remote = await syncFromLobby(lobbyRef.current)
+          if (remote) {
+            const local = loadProgress()
+            const merged = mergeProgress(local, remote)
+            saveProgress(merged)
+            window.dispatchEvent(new CustomEvent('sopa-progress-sync', { detail: merged }))
+          }
+        } catch (err) {
+          console.warn('[Sopa App] Error cargando progreso remoto:', err)
+        } finally {
+          syncFromLobbyDone = true
+          initialSyncDoneRef.current = true
         }
       })()
     })
+
+    // Safety net: si el lobby nunca envía session_context (ej: orígen no
+    // permitido o bug del lobby), habilitamos el auto-save después de 12s
+    // para no dejar al jugador sin persistencia por toda la sesión.
+    setTimeout(() => {
+      if (!syncFromLobbyDone) {
+        console.warn('[Sopa App] session_context no llegó en 12s — auto-save habilitado sin carga remota')
+        initialSyncDoneRef.current = true
+      }
+    }, 12000)
 
     lobbyRef.current = lobby
     return () => { lobby.destroy(); lobbyRef.current = null }
@@ -841,23 +870,11 @@ export default function App() {
 
   /* ─── Lobby Sync (el lobby es el cerebro; no tocamos Supabase) ─── */
 
+  // initialSyncDoneRef se settea TRUE solo en el callback onSessionContext
+  // del lobby (o tras un safety-net de 12s si el lobby no responde).
+  // El auto-save de abajo NO sube nada hasta que esto sea true, evitando
+  // pisar el progreso remoto con un estado local incompleto.
   const initialSyncDoneRef = useRef(false)
-
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const remote = await syncFromLobby(lobbyRef.current)
-        if (remote) {
-          const local = loadProgress()
-          const merged = mergeProgress(local, remote)
-          saveProgress(merged)
-          window.dispatchEvent(new CustomEvent('sopa-progress-sync', { detail: merged }))
-        }
-      } catch {}
-      initialSyncDoneRef.current = true
-    }
-    init()
-  }, [])
 
   const syncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   useEffect(() => {
