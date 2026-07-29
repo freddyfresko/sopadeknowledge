@@ -6,6 +6,7 @@
  */
 import { useState } from 'react'
 import type { PlayerProgress, GameStats, Achievement, PowerUpType } from './game/types'
+import type { SessionContextPayload } from './lib/sdk/types'
 import { allWords, categories } from './data/index'
 import { ACHIEVEMENTS } from './data/achievements'
 import { getRank } from './game/progression'
@@ -373,12 +374,28 @@ export function CollectionScreen({ progress, onBack }: { progress: PlayerProgres
 
 /* ─── Enhanced Profile Screen ─── */
 
-export function ProfileScreen({ progress, stats }: { progress: PlayerProgress; stats: GameStats }) {
+export function ProfileScreen({
+  progress,
+  stats,
+  lobbyCtx,
+}: {
+  progress: PlayerProgress
+  stats: GameStats
+  lobbyCtx?: SessionContextPayload | null
+}) {
   const rank = getRank(progress.xp)
   const nextRank = RANKS.find(r => r.xpRequired > progress.xp)
   const rankProgress = nextRank ? Math.min(100, Math.round(((progress.xp - rank.xpRequired) / (nextRank.xpRequired - rank.xpRequired)) * 100)) : 100
   const completedAch = progress.achievements.filter(a => a.completed).length
   const totalAch = progress.achievements.length
+
+  // ─── Identidad del jugador ───
+  // El lobby manda displayName y (opcional) avatarUrl via session_context.
+  // Si el lobby está disponible lo usamos; si no (standalone), caemos al
+  // perfil local. El avatar del lobby puede ser una URL o un emoji short.
+  const displayName = lobbyCtx?.displayName ?? progress.profile.displayName
+  const avatarEmoji = lobbyCtx?.avatarUrl ?? progress.profile.avatarEmoji
+  const isGuest = lobbyCtx?.isGuest ?? false
 
   return (
     <div className="flex-1 overflow-y-auto px-4 pb-24 pt-4">
@@ -387,10 +404,17 @@ export function ProfileScreen({ progress, stats }: { progress: PlayerProgress; s
         <Card className="overflow-hidden mb-4" glow="purple">
           {/* Avatar & Rank banner */}
           <div className="relative pt-6 pb-4 px-5 text-center" style={{ background: `linear-gradient(180deg, ${rank.color}22, transparent)` }}>
-            <div className="w-16 h-16 rounded-full mx-auto mb-2 flex items-center justify-center text-3xl shadow-lg" style={{ background: `linear-gradient(135deg, ${rank.color}, transparent)` }}>
-              {progress.profile.avatarEmoji}
+            <div className="w-16 h-16 rounded-full mx-auto mb-2 flex items-center justify-center text-3xl shadow-lg overflow-hidden" style={{ background: `linear-gradient(135deg, ${rank.color}, transparent)` }}>
+              {avatarEmoji.startsWith('http')
+                ? <img src={avatarEmoji} alt={displayName} className="w-full h-full object-cover" />
+                : avatarEmoji}
             </div>
-            <h2 className="font-bold text-base text-white">{progress.profile.displayName}</h2>
+            <h2 className="font-bold text-base text-white">{displayName}</h2>
+            {isGuest && (
+              <span className="inline-block mt-1 text-[9px] font-bold uppercase tracking-widest text-yellow-neon/80 bg-yellow-neon/10 border border-yellow-neon/30 rounded-full px-2 py-0.5">
+                Invitado
+              </span>
+            )}
             <div className="flex items-center justify-center gap-1.5 mt-1">
               <span style={{ color: rank.color }}>{rank.icon}</span>
               <span className="text-overline text-[10px] font-bold" style={{ color: rank.color }}>{rank.name}</span>

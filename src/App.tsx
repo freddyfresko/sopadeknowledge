@@ -28,6 +28,7 @@ import { loadProgress, saveProgress } from './game/progression'
 import { syncToLobby, syncFromLobby, mergeProgress } from './lib/lobby-persistence'
 import { createLobbyClient } from './lib/sdk/lobby-client'
 import type { LobbyClientInstance } from './lib/sdk/lobby-client'
+import type { SessionContextPayload } from './lib/sdk/types'
 import { Button, Card, Chip, Progress, ScreenHeader } from './components/ui'
 import { IconPlay, IconStar, IconBook, IconCart, IconHome, IconGrid, IconProfile, IconHint, IconEye, IconShuffle, IconTrash } from './components/icons'
 
@@ -729,6 +730,10 @@ export default function App() {
   const [splashDone, setSplashDone] = useState(false)
   const audio = useAudio()
   const lobbyRef = useRef<LobbyClientInstance | null>(null)
+  // Contexto del lobby (displayName, avatar, level, isGuest, ...).
+  // Cuando el juego corre dentro del iframe del lobby, el lobby nos lo envía
+  // via jh:session_context. Null mientras tanto (modo standalone).
+  const [lobbyCtx, setLobbyCtx] = useState<SessionContextPayload | null>(null)
 
   const {
     progress, stats, pendingAchievements,
@@ -773,8 +778,12 @@ export default function App() {
     lobby.onResume(() => audio.resumeAll())
 
     // El lobby nos enviará el contexto del usuario una vez confirmado el ready.
-    // Lo guardamos para personalizar la UI y disparamos la carga de progreso.
+    // Lo guardamos para personalizar la UI (ProfileScreen muestra displayName
+    // y avatar del lobby en vez del perfil local hardcodeado) y disparamos
+    // la carga de progreso.
     lobby.onSessionContext((ctx) => {
+      setLobbyCtx(ctx)
+
       // Si el usuario es invitado, el lobby confirma guardados sin persistir.
       // El juego sigue funcionando con localStorage como cache local.
       if (ctx.isGuest) return
@@ -1217,7 +1226,7 @@ export default function App() {
             )}
             {screen === 'categories' && <CategoriesScreen progress={progress} />}
             {screen === 'collection' && <CollectionScreen progress={progress} onBack={() => setScreen('home')} />}
-            {screen === 'profile' && <ProfileScreen progress={progress} stats={stats} />}
+            {screen === 'profile' && <ProfileScreen progress={progress} stats={stats} lobbyCtx={lobbyCtx} />}
             {screen === 'store' && <StoreScreen progress={progress} onBack={() => setScreen('home')} onBuy={handleBuy} />}
             {screen === 'challenges' && <ChallengesScreen progress={progress} onBack={() => setScreen('home')} onClaimDaily={handleClaimDaily} />}
             {screen === 'modes' && <ModesScreen onBack={() => setScreen('home')} onSelect={(m) => { setGameMode(m); setPlaying(true); setGameStarted(false) }} />}
