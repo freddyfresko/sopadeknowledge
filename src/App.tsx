@@ -24,9 +24,8 @@ import {
   AchievementNotification,
 } from './screens'
 import useAudio from './hooks/useAudio'
-import { getSupabase } from './lib/supabase'
 import { loadProgress, saveProgress } from './game/progression'
-import { syncToSupabase, syncFromSupabase, mergeProgress } from './lib/supabase-sync'
+import { syncToLobby, syncFromLobby, mergeProgress } from './lib/lobby-persistence'
 import { createLobbyClient } from './lib/sdk/lobby-client'
 import type { LobbyClientInstance } from './lib/sdk/lobby-client'
 import { Button, Card, Chip, Progress, ScreenHeader } from './components/ui'
@@ -763,11 +762,36 @@ export default function App() {
       } catch {}
     }
 
-    const lobby = createLobbyClient({ lobbyOrigin })
-    lobby.onReady({ version: '1.0.0' })
+    const lobby = createLobbyClient({
+      lobbyOrigin,
+      gameId: 'sopa',
+      capabilities: ['save_progress', 'load_progress', 'achievements'],
+    })
+    lobby.sendReady({ version: '1.0.0' })
 
     lobby.onPause(() => audio.pauseAll())
     lobby.onResume(() => audio.resumeAll())
+
+    // El lobby nos enviará el contexto del usuario una vez confirmado el ready.
+    // Lo guardamos para personalizar la UI y disparamos la carga de progreso.
+    lobby.onSessionContext((ctx) => {
+      // Si el usuario es invitado, el lobby confirma guardados sin persistir.
+      // El juego sigue funcionando con localStorage como cache local.
+      if (ctx.isGuest) return
+
+      // Disparar carga del progreso remoto al recibir el contexto.
+      // El propio useEffect de sync más abajo también lo intenta al montar,
+      // pero con onSessionContext garantizamos que el lobby ya tiene sesión.
+      void (async () => {
+        const remote = await syncFromLobby(lobbyRef.current)
+        if (remote) {
+          const local = loadProgress()
+          const merged = mergeProgress(local, remote)
+          saveProgress(merged)
+          window.dispatchEvent(new CustomEvent('sopa-progress-sync', { detail: merged }))
+        }
+      })()
+    })
 
     lobbyRef.current = lobby
     return () => { lobby.destroy(); lobbyRef.current = null }
@@ -799,23 +823,19 @@ export default function App() {
 
   const [revealedWord, setRevealedWord] = useState<string | null>(null)
 
-  /* ─── Supabase Sync ─── */
+  /* ─── Lobby Sync (el lobby es el cerebro; no tocamos Supabase) ─── */
 
   const initialSyncDoneRef = useRef(false)
 
   useEffect(() => {
     const init = async () => {
       try {
-        const supabase = getSupabase()
-        const { data: { user } } = await supabase.auth.getUser()
-        if (user) {
-          const remote = await syncFromSupabase()
-          if (remote) {
-            const local = loadProgress()
-            const merged = mergeProgress(local, remote)
-            saveProgress(merged)
-            window.dispatchEvent(new CustomEvent('sopa-progress-sync', { detail: merged }))
-          }
+        const remote = await syncFromLobby(lobbyRef.current)
+        if (remote) {
+          const local = loadProgress()
+          const merged = mergeProgress(local, remote)
+          saveProgress(merged)
+          window.dispatchEvent(new CustomEvent('sopa-progress-sync', { detail: merged }))
         }
       } catch {}
       initialSyncDoneRef.current = true
@@ -827,7 +847,7 @@ export default function App() {
   useEffect(() => {
     if (!initialSyncDoneRef.current) return
     if (syncTimerRef.current) clearTimeout(syncTimerRef.current)
-    syncTimerRef.current = setTimeout(() => syncToSupabase(progress), 4000)
+    syncTimerRef.current = setTimeout(() => syncToLobby(lobbyRef.current, progress), 4000)
     return () => { if (syncTimerRef.current) clearTimeout(syncTimerRef.current) }
   }, [progress])
 
