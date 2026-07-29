@@ -782,6 +782,13 @@ export default function App() {
     // y avatar del lobby en vez del perfil local hardcodeado) y disparamos
     // la carga de progreso.
     lobby.onSessionContext((ctx) => {
+      console.log('[Sopa App] session_context recibido:', {
+        userId: ctx.userId,
+        displayName: ctx.displayName,
+        isGuest: ctx.isGuest,
+        level: ctx.level,
+        xp: ctx.xp,
+      })
       setLobbyCtx(ctx)
 
       // Si el usuario es invitado, el lobby confirma guardados sin persistir.

@@ -103,10 +103,17 @@ export async function syncToLobby(
   if (!lobby) {
     // Modo standalone (fuera del iframe): el lobby no está disponible.
     // localStorage sigue siendo la verdad local. No es un error.
+    console.log('[Sopa syncToLobby] sin lobby (standalone) — solo local')
     return { success: true, message: 'Sin lobby (standalone) — solo local' }
   }
 
   try {
+    console.log('[Sopa syncToLobby] guardando en lobby:', {
+      xp: progress.xp,
+      level: progress.level,
+      wordsFoundCount: progress.wordsFound.length,
+      totalWordsFound: progress.totalWordsFound,
+    })
     const result = await lobby.saveProgress({
       gameState: toSopaState(progress) as unknown as Record<string, unknown>,
       score: progress.xp,
@@ -139,19 +146,37 @@ export async function syncToLobby(
 export async function syncFromLobby(
   lobby: LobbyClientInstance | null,
 ): Promise<PlayerProgress | null> {
-  if (!lobby) return null
+  if (!lobby) {
+    console.log('[Sopa syncFromLobby] sin lobby (standalone) → null')
+    return null
+  }
 
   try {
+    console.log('[Sopa syncFromLobby] pidiendo progreso al lobby...')
     const data = await lobby.loadProgress({ schemaVersion: SCHEMA_VERSION })
+    console.log('[Sopa syncFromLobby] respuesta del lobby:', {
+      success: data.success,
+      hasGameState: !!data.gameState,
+      bestScore: data.bestScore,
+      error: data.error,
+    })
 
     if (!data.success || !data.gameState) {
+      console.log('[Sopa syncFromLobby] sin datos guardados — empezando nuevo')
       return null
     }
 
     const state = data.gameState as unknown as SopaState
-    return fromSopaState(state, data.bestScore)
+    const progress = fromSopaState(state, data.bestScore)
+    console.log('[Sopa syncFromLobby] progreso reconstruido:', {
+      xp: progress.xp,
+      level: progress.level,
+      wordsFoundCount: progress.wordsFound.length,
+      totalWordsFound: progress.totalWordsFound,
+    })
+    return progress
   } catch (err) {
-    console.warn('[Sopa] No se pudo cargar progreso del lobby:', err)
+    console.warn('[Sopa syncFromLobby] no se pudo cargar progreso del lobby:', err)
     return null
   }
 }
