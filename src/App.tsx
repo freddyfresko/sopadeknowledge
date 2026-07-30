@@ -729,6 +729,10 @@ function BottomNav({ active, onChange }: { active: Screen; onChange: (s: Screen)
 export default function App() {
   const [splashDone, setSplashDone] = useState(false)
   const audio = useAudio()
+  // Estabilizar la referencia de audio para que no dispare re-renders
+  // del useEffect que crea el lobby (que destruiría el lobby en cada render).
+  const audioRef = useRef(audio)
+  audioRef.current = audio
   const lobbyRef = useRef<LobbyClientInstance | null>(null)
   // Contexto del lobby (displayName, avatar, level, isGuest, ...).
   // Cuando el juego corre dentro del iframe del lobby, el lobby nos lo envía
@@ -774,8 +778,8 @@ export default function App() {
     })
     lobby.sendReady({ version: '1.0.0' })
 
-    lobby.onPause(() => audio.pauseAll())
-    lobby.onResume(() => audio.resumeAll())
+    lobby.onPause(() => audioRef.current.pauseAll())
+    lobby.onResume(() => audioRef.current.resumeAll())
 
     // El lobby nos enviará el contexto del usuario una vez confirmado el ready.
     // Lo guardamos para personalizar la UI (ProfileScreen muestra displayName
@@ -840,7 +844,7 @@ export default function App() {
 
     lobbyRef.current = lobby
     return () => { lobby.destroy(); lobbyRef.current = null }
-  }, [splashDone, audio])
+  }, [splashDone]) // eslint-disable-line react-hooks/exhaustive-deps
 
   /* ─── Navigation state ─── */
 
