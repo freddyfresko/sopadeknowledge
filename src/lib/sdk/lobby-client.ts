@@ -52,6 +52,7 @@ import type {
   AchievementResultPayload,
   CampaignResponsePayload,
   EndSessionPayload,
+  ViewportPayload,
   MessageCallback,
 } from './types'
 import { PROTOCOL_VERSION, createRequestId } from './types'
@@ -100,6 +101,8 @@ export interface LobbyClientInstance {
   onResume: (cb: MessageCallback) => void
   /** Escuchar cierre de sesión */
   onEndSession: (cb: MessageCallback<EndSessionPayload>) => void
+  /** Escuchar cambios de viewport del iframe (resize, fullscreen, orientación) */
+  onViewportChanged: (cb: MessageCallback<ViewportPayload>) => void
 
   /** Destruir la instancia y limpiar listeners */
   destroy: () => void
@@ -143,6 +146,7 @@ export function createLobbyClient(options: LobbyClientOptions): LobbyClientInsta
   let resumeCb: MessageCallback[] = []
   let sessionContextCb: MessageCallback<SessionContextPayload>[] = []
   let endSessionCb: MessageCallback<EndSessionPayload>[] = []
+  let viewportCb: MessageCallback<ViewportPayload>[] = []
 
   // ─── Escuchar respuestas del lobby ───
   const responseListener = listenMessages((msg) => {
@@ -163,6 +167,10 @@ export function createLobbyClient(options: LobbyClientOptions): LobbyClientInsta
 
       case MessageType.END_SESSION:
         endSessionCb.forEach((cb) => cb(msg.payload as EndSessionPayload))
+        break
+
+      case MessageType.VIEWPORT_CHANGED:
+        viewportCb.forEach((cb) => cb(msg.payload as ViewportPayload))
         break
 
       case MessageType.SAVE_RESULT: {
@@ -296,6 +304,7 @@ export function createLobbyClient(options: LobbyClientOptions): LobbyClientInsta
     onPause: (cb: MessageCallback) => { pauseCb.push(cb) },
     onResume: (cb: MessageCallback) => { resumeCb.push(cb) },
     onEndSession: (cb: MessageCallback<EndSessionPayload>) => { endSessionCb.push(cb) },
+    onViewportChanged: (cb: MessageCallback<ViewportPayload>) => { viewportCb.push(cb) },
 
     // ═══ Cleanup ═══
     destroy: () => {

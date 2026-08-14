@@ -742,9 +742,15 @@ export default function App() {
   // Re-render cuando cambia el viewport (rotación, teclado móvil, barra del
   // navegador). h-dvh se recalcula solo, pero algunos layouts flex necesitan
   // un re-flow para re-centrarse (modales, grid).
-  const [, setViewportTick] = useState(0)
+  const [viewport, setViewport] = useState<{
+    width?: number
+    height?: number
+    isFullscreen?: boolean
+    orientation?: 'portrait' | 'landscape'
+    devicePixelRatio?: number
+  }>({})
   useEffect(() => {
-    const onResize = () => setViewportTick((t) => t + 1)
+    const onResize = () => setViewport((v) => ({ ...v }))
     window.addEventListener('resize', onResize)
     window.addEventListener('orientationchange', onResize)
     return () => {
@@ -794,6 +800,14 @@ export default function App() {
 
     lobby.onPause(() => audioRef.current.pauseAll())
     lobby.onResume(() => audioRef.current.resumeAll())
+
+    // El lobby nos notifica el tamaño real del iframe (resize, fullscreen,
+    // rotación). Guardamos el viewport y forzamos re-render para que los
+    // layouts se re-centren correctamente en móvil.
+    lobby.onViewportChanged((vp) => {
+      console.log('[Sopa App] viewport_changed:', vp)
+      setViewport((prev) => ({ ...prev, ...vp }))
+    })
 
     // El lobby nos enviará el contexto del usuario una vez confirmado el ready.
     // Lo guardamos para personalizar la UI (ProfileScreen muestra displayName
@@ -1154,7 +1168,17 @@ export default function App() {
   const timedMode = gameMode === 'timed' || gameMode === 'survival'
 
   return (
-    <div className="h-dvh bg-bg-primary flex flex-col overflow-hidden">
+    <div
+      className="h-dvh bg-bg-primary flex flex-col overflow-hidden"
+      style={{
+        // Exponer el viewport real del iframe (enviado por el lobby) como
+        // variables CSS para que los componentes puedan reaccionar
+        // (ej: compactar el grid en landscape móvil).
+        ['--game-vw' as string]: viewport.width ? `${viewport.width}px` : undefined,
+        ['--game-vh' as string]: viewport.height ? `${viewport.height}px` : undefined,
+        ['--game-dpr' as string]: viewport.devicePixelRatio ? String(viewport.devicePixelRatio) : undefined,
+      }}
+    >
       {playing ? (gameStarted ? (
         <>
           {/* Game header bar */}

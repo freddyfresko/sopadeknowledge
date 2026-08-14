@@ -87,6 +87,8 @@ export const MessageType = {
   RESUME: 'jh:resume',
   /** El lobby cierra la sesión de juego */
   END_SESSION: 'jh:end_session',
+  /** El lobby notifica el tamaño real del viewport del iframe (resize, fullscreen, orientación) */
+  VIEWPORT_CHANGED: 'jh:viewport_changed',
 } as const
 
 export type MessageType = (typeof MessageType)[keyof typeof MessageType]
@@ -272,6 +274,20 @@ export interface EndSessionPayload {
   reason?: 'navigate_away' | 'timeout' | 'error' | 'user_logout'
 }
 
+/** El lobby notifica el viewport real del iframe (px CSS del contenedor) */
+export interface ViewportPayload {
+  /** Ancho del iframe en px CSS */
+  width: number
+  /** Alto del iframe en px CSS */
+  height: number
+  /** Si el juego está en pantalla completa */
+  isFullscreen: boolean
+  /** Orientación actual del dispositivo */
+  orientation: 'portrait' | 'landscape'
+  /** Densidad de píxeles del dispositivo */
+  devicePixelRatio: number
+}
+
 // ─── Mapa de tipo → payload ───
 
 export interface MessagePayloadMap {
@@ -295,6 +311,7 @@ export interface MessagePayloadMap {
   [MessageType.PAUSE]: undefined
   [MessageType.RESUME]: undefined
   [MessageType.END_SESSION]: EndSessionPayload
+  [MessageType.VIEWPORT_CHANGED]: ViewportPayload
 }
 
 // ─── Callbacks para eventos ───
@@ -311,6 +328,7 @@ export interface GameEventHandlers {
   onAchievementResult?: MessageCallback<AchievementResultPayload>
   onCampaignResponse?: MessageCallback<CampaignResponsePayload>
   onEndSession?: MessageCallback<EndSessionPayload>
+  onViewportChanged?: MessageCallback<ViewportPayload>
 }
 
 /** Handlers que el lobby puede registrar (eventos del juego) */
