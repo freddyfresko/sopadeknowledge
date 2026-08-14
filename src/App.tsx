@@ -774,7 +774,7 @@ export default function App() {
     const lobby = createLobbyClient({
       lobbyOrigin,
       gameId: 'sopa',
-      capabilities: ['save_progress', 'load_progress', 'achievements'],
+      capabilities: ['save_progress', 'load_progress', 'achievements', 'campaigns'],
     })
     lobby.sendReady({ version: '1.0.0' })
 
@@ -1278,18 +1278,32 @@ export default function App() {
           totalWords={game.words.length}
           elapsedSeconds={elapsedSeconds}
           mode={gameMode}
-          onNext={() => {
+          onNext={async () => {
             lobbyRef.current?.sendGameCompleted({
               score: progress.xp,
               metadata: { mode: gameMode, wordsFound: foundWords.size, totalWords: game.words.length, time: elapsedSeconds },
             })
+            // Ad interstitial entre niveles (placements: game_level_complete).
+            // Si el lobby no tiene campaña, resuelve de inmediato y sigue.
+            try {
+              await lobbyRef.current?.requestCampaign({
+                placement: 'game_level_complete',
+                rewardIds: [],
+              })
+            } catch { /* timeout o sin campaña — seguir */ }
             newGame(); setGameStarted(false)
           }}
-          onSummary={() => {
+          onSummary={async () => {
             lobbyRef.current?.sendGameCompleted({
               score: progress.xp,
               metadata: { mode: gameMode, wordsFound: foundWords.size, totalWords: game.words.length, time: elapsedSeconds },
             })
+            try {
+              await lobbyRef.current?.requestCampaign({
+                placement: 'game_level_complete',
+                rewardIds: [],
+              })
+            } catch { /* seguir */ }
             setPlaying(false); setScreen('collection')
           }}
         />
@@ -1299,7 +1313,16 @@ export default function App() {
           foundCount={foundWords.size}
           totalWords={game.words.length}
           mode={gameMode}
-          onRetry={() => { newGame(); setGameStarted(true) }}
+          onRetry={async () => {
+            // Ad interstitial al morir (placement: game_results)
+            try {
+              await lobbyRef.current?.requestCampaign({
+                placement: 'game_results',
+                rewardIds: [],
+              })
+            } catch { /* seguir */ }
+            newGame(); setGameStarted(true)
+          }}
           onExit={() => { setPlaying(false); setGameStarted(false) }}
         />
       )}
