@@ -882,6 +882,12 @@ export default function App() {
   const [gameStarted, setGameStarted] = useState(false)
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  // XP acumulado al inicio de la partida actual — para reportar al lobby el
+  // score REAL de esta partida (progreso.xp - xpInicial), no el total histórico.
+  const startXpRef = useRef(0)
+  // Ref del progress para usarlo dentro de useCallbacks sin agregar deps.
+  const progressRef = useRef(progress)
+  progressRef.current = progress
   const [showUnlock, setShowUnlock] = useState<string[] | null>(null)
   const [showLevelUp, setShowLevelUp] = useState(false)
   const [showHintModal, setShowHintModal] = useState(false)
@@ -1069,6 +1075,8 @@ export default function App() {
   }, [cells, foundWords, game, recordFind, addScorePopup, addParticles, gameMode, gameOver])
 
   const newGame = useCallback(() => {
+    // Anclar el XP inicial: el score de esta partida = lo ganado en ella.
+    startXpRef.current = progressRef.current.xp
     seedRef.current = Date.now().toString()
     const isDaily = gameMode === 'daily'
     const seed = isDaily ? getDailySeed() : seedRef.current
@@ -1318,7 +1326,9 @@ export default function App() {
           mode={gameMode}
           onNext={async () => {
             lobbyRef.current?.sendGameCompleted({
-              score: progress.xp,
+              score: Math.max(0, progress.xp - startXpRef.current),
+              completed: true,
+              timeSpent: elapsedSeconds,
               metadata: { mode: gameMode, wordsFound: foundWords.size, totalWords: game.words.length, time: elapsedSeconds },
             })
             // Ad interstitial entre niveles (placements: game_level_complete).
@@ -1333,7 +1343,9 @@ export default function App() {
           }}
           onSummary={async () => {
             lobbyRef.current?.sendGameCompleted({
-              score: progress.xp,
+              score: Math.max(0, progress.xp - startXpRef.current),
+              completed: true,
+              timeSpent: elapsedSeconds,
               metadata: { mode: gameMode, wordsFound: foundWords.size, totalWords: game.words.length, time: elapsedSeconds },
             })
             try {
