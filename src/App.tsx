@@ -801,6 +801,9 @@ export default function App() {
     lobby.onPause(() => audioRef.current.pauseAll())
     lobby.onResume(() => audioRef.current.resumeAll())
 
+    // El lobby cerró la sesión (navegó fuera, timeout, logout) — pausar audio.
+    lobby.onEndSession(() => audioRef.current.pauseAll())
+
     // El lobby nos notifica el tamaño real del iframe (resize, fullscreen,
     // rotación). Guardamos el viewport y forzamos re-render para que los
     // layouts se re-centren correctamente en móvil.
@@ -874,6 +877,24 @@ export default function App() {
     return () => { lobby.destroy(); lobbyRef.current = null }
   }, [splashDone]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  /* ─── Sync de logros con el lobby (REGLAS-GENERALES: unlockAchievement) ─── */
+
+  // useProgression dispara 'sopa-achievement-unlocked' con los IDs nuevos;
+  // acá los registramos en el lobby (tabla achievement_unlocks → perfil).
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const ids = (e as CustomEvent<string[]>).detail
+      const lobby = lobbyRef.current
+      for (const id of ids) {
+        if (lobby) {
+          lobby.unlockAchievement({ achievementId: `sopa_${id}` }).catch(() => { /* no crítico */ })
+        }
+      }
+    }
+    window.addEventListener('sopa-achievement-unlocked', handler)
+    return () => window.removeEventListener('sopa-achievement-unlocked', handler)
+  }, [])
+
   /* ─── Navigation state ─── */
 
   const [screen, setScreen] = useState<Screen>('home')
@@ -885,6 +906,10 @@ export default function App() {
   // XP acumulado al inicio de la partida actual — para reportar al lobby el
   // score REAL de esta partida (progreso.xp - xpInicial), no el total histórico.
   const startXpRef = useRef(0)
+  // Niveles completados en esta partida (para metadata + completed).
+  const sessionLevelsRef = useRef(0)
+  // Guard: solo UN game_completed por partida (el lobby ignora el segundo).
+  const gameCompletedRef = useRef(false)
   // Ref del progress para usarlo dentro de useCallbacks sin agregar deps.
   const progressRef = useRef(progress)
   progressRef.current = progress
@@ -1075,8 +1100,6 @@ export default function App() {
   }, [cells, foundWords, game, recordFind, addScorePopup, addParticles, gameMode, gameOver])
 
   const newGame = useCallback(() => {
-    // Anclar el XP inicial: el score de esta partida = lo ganado en ella.
-    startXpRef.current = progressRef.current.xp
     seedRef.current = Date.now().toString()
     const isDaily = gameMode === 'daily'
     const seed = isDaily ? getDailySeed() : seedRef.current
@@ -1095,9 +1118,43 @@ export default function App() {
   const handleStartGame = useCallback(() => {
     newGame()
     setGameStarted(true)
-    // Notificar al lobby que el juego comenzó
-    lobbyRef.current?.sendGameStarted()
-  }, [newGame])
+    // ─── Partida nueva (REGLAS-GENERALES v2): anclar el XP de inicio,
+    // resetear contadores y avisar al lobby con el modo como difficulty. ───
+    startXpRef.current = progressRef.current.xp
+    sessionLevelsRef.current = 0
+    gameCompletedRef.current = false
+    lobbyRef.current?.sendGameStarted({ difficulty: gameMode })
+  }, [newGame, gameMode])
+
+  /**
+   * Cierra la partida con UN solo game_completed (el lobby ignora envíos
+   * posteriores de la misma sesión). completed SIEMPRE explícito.
+   * score = XP ganado en ESTA partida (nunca el histórico).
+   */
+  const finishPartida = useCallback((completed: boolean) => {
+    if (gameCompletedRef.current) return
+    gameCompletedRef.current = true
+    lobbyRef.current?.sendGameCompleted({
+      score: Math.max(0, progressRef.current.xp - startXpRef.current),
+      completed,
+      timeSpent: elapsedSeconds,
+      difficulty: gameMode,
+      metadata: {
+        mode: gameMode,
+        levelsCompleted: sessionLevelsRef.current,
+        time: elapsedSeconds,
+      },
+    })
+  }, [elapsedSeconds, gameMode])
+
+  /**
+   * Volver al hub: si completó niveles, cierra la partida como completada;
+   * si no, no reporta nada (el lobby la cierra como abandonada).
+   */
+  const handleExitToHub = useCallback(() => {
+    if (sessionLevelsRef.current > 0) finishPartida(true)
+    setGameStarted(false)
+  }, [finishPartida])
 
   /* ─── Power-up handlers ─── */
 
@@ -1191,7 +1248,7 @@ export default function App() {
         <>
           {/* Game header bar */}
           <div className="flex items-center justify-between px-4 py-2.5 bg-bg-card border-b border-border-subtle">
-            <button onClick={() => setGameStarted(false)} className="flex items-center gap-1 text-sm text-text-muted hover:text-white transition-colors">
+            <button onClick={handleExitToHub} className="flex items-center gap-1 text-sm text-text-muted hover:text-white transition-colors">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
               Volver
             </button>
@@ -1325,12 +1382,9 @@ export default function App() {
           elapsedSeconds={elapsedSeconds}
           mode={gameMode}
           onNext={async () => {
-            lobbyRef.current?.sendGameCompleted({
-              score: Math.max(0, progress.xp - startXpRef.current),
-              completed: true,
-              timeSpent: elapsedSeconds,
-              metadata: { mode: gameMode, wordsFound: foundWords.size, totalWords: game.words.length, time: elapsedSeconds },
-            })
+            // Nivel completado: la partida SIGUE (misma sesión). El
+            // game_completed va al final, UNA vez por partida.
+            sessionLevelsRef.current += 1
             // Ad interstitial entre niveles (placements: game_level_complete).
             // Si el lobby no tiene campaña, resuelve de inmediato y sigue.
             try {
@@ -1342,12 +1396,10 @@ export default function App() {
             newGame(); setGameStarted(false)
           }}
           onSummary={async () => {
-            lobbyRef.current?.sendGameCompleted({
-              score: Math.max(0, progress.xp - startXpRef.current),
-              completed: true,
-              timeSpent: elapsedSeconds,
-              metadata: { mode: gameMode, wordsFound: foundWords.size, totalWords: game.words.length, time: elapsedSeconds },
-            })
+            // Partida terminada con éxito: UN game_completed con el score
+            // total ganado en ella (completed SIEMPRE explícito).
+            sessionLevelsRef.current += 1
+            finishPartida(true)
             try {
               await lobbyRef.current?.requestCampaign({
                 placement: 'game_level_complete',
@@ -1364,6 +1416,8 @@ export default function App() {
           totalWords={game.words.length}
           mode={gameMode}
           onRetry={async () => {
+            // Perdió pero REINTENTA: la partida sigue abierta (no se cierra
+            // todavía). El game_completed va al final, UNA vez por partida.
             // Ad interstitial al morir (placement: game_results)
             try {
               await lobbyRef.current?.requestCampaign({
@@ -1373,7 +1427,12 @@ export default function App() {
             } catch { /* seguir */ }
             newGame(); setGameStarted(true)
           }}
-          onExit={() => { setPlaying(false); setGameStarted(false) }}
+          onExit={() => {
+            // Derrota: cerrar la partida. completed=true solo si completó
+            // algún nivel antes; si no, false (perdió) — los puntos suman.
+            finishPartida(sessionLevelsRef.current > 0)
+            setPlaying(false); setGameStarted(false)
+          }}
         />
       )}
       {showHintModal && (

@@ -90,6 +90,11 @@ export function useProgression() {
         return a
       })
       setPendingAchievements(prev => [...prev, ...result.newAchievements])
+      // Avisar al lobby (App escucha esto) para registrar los logros nuevos
+      // en el perfil del jugador (achievement_unlocks).
+      window.dispatchEvent(new CustomEvent('sopa-achievement-unlocked', {
+        detail: result.newAchievements.map(a => a.id),
+      }))
     }
 
     persist(p)
