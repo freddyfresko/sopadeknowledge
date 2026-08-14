@@ -108,6 +108,7 @@
    ═══════════════════════════════════════════════════════ */
 body {
   margin: 0;
+  height: 100dvh;
   background-color: var(--color-bg-primary);
   /* Subtle dot texture — prevents flat void */
   background-image:
@@ -120,6 +121,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
   /* iOS momentum scroll */
   -webkit-overflow-scrolling: touch;
+}
+
+#root {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Selection color */

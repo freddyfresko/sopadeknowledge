@@ -164,8 +164,8 @@ function KnowledgeModal({ word, onClose }: { word: string | null; onClose: () =>
   if (!entry || !word) return null
   const color = cat?.color ?? '#8E44AD'
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm" onClick={onClose}>
-      <div className="card-enter relative max-w-md w-full rounded-2xl overflow-hidden border border-border-card bg-bg-card shadow-[0_24px_64px_rgba(0,0,0,0.4)]" onClick={e => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm overflow-y-auto" onClick={onClose}>
+      <div className="card-enter relative my-auto max-w-md w-full rounded-2xl overflow-hidden border border-border-card bg-bg-card shadow-[0_24px_64px_rgba(0,0,0,0.4)]" onClick={e => e.stopPropagation()}>
         {/* Hero header con gradiente direccional */}
         <div className="relative h-40 overflow-hidden flex items-center justify-center"
              style={{ background: `linear-gradient(135deg, ${color}33 0%, ${color}08 60%, transparent 100%)` }}>
@@ -225,8 +225,8 @@ function KnowledgeModal({ word, onClose }: { word: string | null; onClose: () =>
 
 function CategoryUnlock({ newCategories, onClose }: { newCategories: string[]; onClose: () => void }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={onClose}>
-      <div className="card-enter relative max-w-sm w-full rounded-2xl border border-yellow-neon/30 p-6 bg-bg-card text-center shadow-[0_24px_64px_rgba(0,0,0,0.45)]" onClick={e => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto" onClick={onClose}>
+      <div className="card-enter relative my-auto max-w-sm w-full rounded-2xl border border-yellow-neon/30 p-6 bg-bg-card text-center shadow-[0_24px_64px_rgba(0,0,0,0.45)]" onClick={e => e.stopPropagation()}>
         <div className="absolute -inset-1 bg-gradient-to-b from-yellow-neon/15 to-transparent rounded-3xl pointer-events-none" />
         <div className="relative">
           <div className="text-3xl mb-2">🎉</div>
@@ -259,8 +259,8 @@ function CategoryUnlock({ newCategories, onClose }: { newCategories: string[]; o
 
 function LevelUpModal({ newLevel, onClose }: { newLevel: number; onClose: () => void }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={onClose}>
-      <div className="card-enter relative max-w-sm w-full rounded-2xl border border-yellow-neon/30 p-6 bg-bg-card text-center shadow-[0_24px_64px_rgba(0,0,0,0.45)]" onClick={e => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto" onClick={onClose}>
+      <div className="card-enter relative my-auto max-w-sm w-full rounded-2xl border border-yellow-neon/30 p-6 bg-bg-card text-center shadow-[0_24px_64px_rgba(0,0,0,0.45)]" onClick={e => e.stopPropagation()}>
         <div className="absolute -inset-1 bg-gradient-to-b from-yellow-neon/15 to-transparent rounded-3xl pointer-events-none" />
         <div className="relative">
           <div className="text-4xl mb-2">⬆️</div>
@@ -286,8 +286,8 @@ function LevelComplete({ foundCount, totalWords, elapsedSeconds, onNext, onSumma
   const earnedKnowledge = foundCount
   const timeStr = `${String(Math.floor(elapsedSeconds / 60)).padStart(2, '0')}:${String(elapsedSeconds % 60).padStart(2, '0')}`
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
-      <div className="card-enter relative max-w-sm w-full rounded-2xl overflow-hidden border border-yellow-neon/20 bg-bg-card shadow-[0_24px_64px_rgba(0,0,0,0.45)] text-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm overflow-y-auto">
+      <div className="card-enter relative my-auto max-w-sm w-full rounded-2xl overflow-hidden border border-yellow-neon/20 bg-bg-card shadow-[0_24px_64px_rgba(0,0,0,0.45)] text-center">
         {/* Glow background */}
         <div className="absolute -inset-1 bg-gradient-to-b from-yellow-neon/10 to-transparent rounded-3xl pointer-events-none" />
 
@@ -367,8 +367,8 @@ function HintModal({ powerUps, onUseHint, onUseReveal, onUseShuffle, onUseElimin
     { label: 'Eliminar',icon: <IconTrash size={18} />,   desc: 'Quita letras falsas',   count: powerUps.eliminate ?? 0, action: onUseEliminate },
   ]
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 backdrop-blur-sm" onClick={onClose}>
-      <div className="card-enter relative w-full max-w-sm rounded-t-2xl border border-border-card bg-bg-card pb-[env(safe-area-inset-bottom,0px)]" onClick={e => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 backdrop-blur-sm overflow-y-auto" onClick={onClose}>
+      <div className="card-enter relative my-auto w-full max-w-sm rounded-t-2xl border border-border-card bg-bg-card pb-[env(safe-area-inset-bottom,0px)]" onClick={e => e.stopPropagation()}>
         {/* Drag handle */}
         <div className="flex justify-center pt-2.5 pb-1">
           <span className="block w-10 h-1 rounded-full bg-white/20" />
@@ -416,8 +416,8 @@ function GameOver({ foundCount, totalWords, mode, onRetry, onExit }: {
 }) {
   const precision = totalWords > 0 ? Math.round((foundCount / totalWords) * 100) : 0
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
-      <div className="card-enter relative max-w-sm w-full rounded-2xl overflow-hidden border border-red-500/30 bg-bg-card shadow-[0_24px_64px_rgba(0,0,0,0.45)] text-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm overflow-y-auto">
+      <div className="card-enter relative my-auto max-w-sm w-full rounded-2xl overflow-hidden border border-red-500/30 bg-bg-card shadow-[0_24px_64px_rgba(0,0,0,0.45)] text-center">
         <div className="absolute -inset-1 bg-gradient-to-b from-red-500/10 to-transparent rounded-3xl pointer-events-none" />
         <div className="relative px-6 pt-7 pb-5">
           <div className="text-4xl mb-2">{mode === 'timed' ? '⏰' : '💀'}</div>
@@ -738,6 +738,20 @@ export default function App() {
   // Cuando el juego corre dentro del iframe del lobby, el lobby nos lo envía
   // via jh:session_context. Null mientras tanto (modo standalone).
   const [lobbyCtx, setLobbyCtx] = useState<SessionContextPayload | null>(null)
+
+  // Re-render cuando cambia el viewport (rotación, teclado móvil, barra del
+  // navegador). h-dvh se recalcula solo, pero algunos layouts flex necesitan
+  // un re-flow para re-centrarse (modales, grid).
+  const [, setViewportTick] = useState(0)
+  useEffect(() => {
+    const onResize = () => setViewportTick((t) => t + 1)
+    window.addEventListener('resize', onResize)
+    window.addEventListener('orientationchange', onResize)
+    return () => {
+      window.removeEventListener('resize', onResize)
+      window.removeEventListener('orientationchange', onResize)
+    }
+  }, [])
 
   const {
     progress, stats, pendingAchievements,
@@ -1140,7 +1154,7 @@ export default function App() {
   const timedMode = gameMode === 'timed' || gameMode === 'survival'
 
   return (
-    <div className="h-screen bg-bg-primary flex flex-col overflow-hidden">
+    <div className="h-dvh bg-bg-primary flex flex-col overflow-hidden">
       {playing ? (gameStarted ? (
         <>
           {/* Game header bar */}

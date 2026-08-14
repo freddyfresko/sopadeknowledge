@@ -552,9 +552,9 @@ export function SettingsScreen({ onBack }: { onBack: () => void }) {
 export function AchievementNotification({ achievements, onClose }: { achievements: Achievement[]; onClose: () => void }) {
   if (achievements.length === 0) return null
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm overflow-y-auto" onClick={onClose}>
       <div
-        className="card-enter relative max-w-sm w-full rounded-2xl overflow-hidden border border-yellow-neon/30 bg-bg-card shadow-[0_24px_64px_rgba(0,0,0,0.45)]"
+        className="card-enter relative my-auto max-w-sm w-full rounded-2xl overflow-hidden border border-yellow-neon/30 bg-bg-card shadow-[0_24px_64px_rgba(0,0,0,0.45)]"
         onClick={e => e.stopPropagation()}
       >
         <div className="absolute -inset-1 bg-gradient-to-b from-yellow-neon/15 to-transparent rounded-3xl pointer-events-none" />
