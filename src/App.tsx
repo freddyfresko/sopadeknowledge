@@ -96,6 +96,31 @@ function Board({ cells, onCellPointerDown, onCellPointerEnter, onCellPointerUp, 
     for (const [r, c] of gw.positions) foundColorMap.set(`${r}-${c}`, color)
   }
 
+  /* Cápsulas continuas (estilo pegatina) para palabras encontradas */
+  const n = cells.length
+  const capsules = gameWords
+    .filter(gw => foundWords.includes(gw.word) && gw.positions.length > 0)
+    .map(gw => {
+      const color = HIGHLIGHT_COLORS[gw.category] || '#8E44AD'
+      const pos = gw.positions
+      let cx = 0
+      let cy = 0
+      for (const [r, c] of pos) { cx += c + 0.5; cy += r + 0.5 }
+      cx = (cx / pos.length) * (100 / n)
+      cy = (cy / pos.length) * (100 / n)
+      let angle = 0
+      let wPct = 100 / n
+      if (pos.length > 1) {
+        const [r0, c0] = pos[0]
+        const [r1, c1] = pos[1]
+        const dr = r1 - r0
+        const dc = c1 - c0
+        angle = Math.atan2(dr, dc) * 180 / Math.PI
+        wPct = ((pos.length - 1) * Math.sqrt(dr * dr + dc * dc) + 1) * (100 / n)
+      }
+      return { key: gw.word, cx, cy, wPct, angle, color }
+    })
+
   const handlePointerMove = useCallback((e: React.PointerEvent) => {
     if (!gridRef.current) return
     const els = document.elementsFromPoint(e.clientX, e.clientY)
@@ -119,38 +144,65 @@ function Board({ cells, onCellPointerDown, onCellPointerEnter, onCellPointerUp, 
     <div className="select-none touch-none" onContextMenu={e => e.preventDefault()}>
       <div
         ref={gridRef}
-        className="grid gap-[2px] mx-auto"
-        style={{ gridTemplateColumns: `repeat(${cells.length}, minmax(0, 1fr))`, maxWidth: '100%' }}
+        className="relative mx-auto rounded-3xl bg-bg-elevated/50 backdrop-blur-sm border border-border-card p-2.5 shadow-[0_10px_36px_rgba(0,0,0,0.35)]"
+        style={{ maxWidth: '100%' }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={onCellPointerUp}
         onPointerLeave={onCellPointerUp}
       >
-        {cells.map((row, r) =>
-          row.map((cell, c) => {
-            const isFound = foundColorMap.has(`${r}-${c}`)
-            const isSelected = cell.selected || cell.highlighted
-            const hlColor = foundColorMap.get(`${r}-${c}`)
-            return (
-              <div
-                key={`${r}-${c}`}
-                data-r={r}
-                data-c={c}
-                className={`aspect-square flex items-center justify-center text-sm md:text-base lg:text-lg font-extrabold rounded-md transition-all duration-100 cursor-pointer select-none ${
-                  isFound
-                    ? 'text-white font-black shadow-md'
-                    : isSelected
-                      ? 'bg-yellow-neon text-black scale-110 shadow-[0_0_12px_rgba(255,193,7,0.45)] ring-2 ring-yellow-neon/50 z-10'
-                      : 'bg-white text-black hover:bg-yellow-neon/15 hover:text-white'
-                }`}
-                style={isFound && hlColor ? { backgroundColor: hlColor, boxShadow: `0 0 12px ${hlColor}55` } : undefined}
-                role="gridcell"
-              >
-                {cell.letter}
-              </div>
-            )
-          })
-        )}
+        {/* Fichas de letras */}
+        <div className="grid gap-0" style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` }}>
+          {cells.map((row, r) =>
+            row.map((cell, c) => {
+              const isFound = foundColorMap.has(`${r}-${c}`)
+              const isSelected = cell.selected || cell.highlighted
+              return (
+                <div
+                  key={`${r}-${c}`}
+                  data-r={r}
+                  data-c={c}
+                  role="gridcell"
+                  className="aspect-square p-[2px] cursor-pointer select-none"
+                >
+                  <div
+                    data-r={r}
+                    data-c={c}
+                    className={`w-full h-full rounded-[10px] flex items-center justify-center text-sm md:text-base lg:text-lg font-extrabold transition-all duration-100 ${
+                      isFound
+                        ? 'text-white relative z-[1] drop-shadow-[0_1px_3px_rgba(0,0,0,0.55)]'
+                        : isSelected
+                          ? 'bg-yellow-neon text-black relative z-[1] scale-105 shadow-[0_0_14px_rgba(255,193,7,0.5)] ring-2 ring-yellow-neon/60'
+                          : 'bg-white/95 text-black shadow-[0_1px_2px_rgba(0,0,0,0.22)] hover:bg-yellow-neon/15 hover:text-white'
+                    }`}
+                  >
+                    {cell.letter}
+                  </div>
+                </div>
+              )
+            })
+          )}
+        </div>
+
+        {/* Cápsulas de palabras encontradas */}
+        <div className="absolute inset-2.5 pointer-events-none z-0">
+          {capsules.map(cap => (
+            <div
+              key={cap.key}
+              className="absolute"
+              style={{
+                left: `${cap.cx}%`,
+                top: `${cap.cy}%`,
+                width: `${cap.wPct}%`,
+                height: `${100 / n}%`,
+                transform: `translate(-50%, -50%) rotate(${cap.angle}deg)`,
+                background: `linear-gradient(180deg, ${cap.color}F2 0%, ${cap.color}D9 100%)`,
+                borderRadius: '9999px',
+                boxShadow: `0 3px 10px ${cap.color}59, 0 1px 2px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.3)`,
+              }}
+            />
+          ))}
+        </div>
       </div>
     </div>
   )
