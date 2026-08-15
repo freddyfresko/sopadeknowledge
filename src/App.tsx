@@ -96,30 +96,39 @@ function Board({ cells, onCellPointerDown, onCellPointerEnter, onCellPointerUp, 
     for (const [r, c] of gw.positions) foundColorMap.set(`${r}-${c}`, color)
   }
 
-  /* Cápsulas continuas (estilo pegatina) para palabras encontradas */
+  /* Cápsulas continuas (estilo pegatina) para palabras encontradas y selección */
   const n = cells.length
+  const capsuleFor = (pos: [number, number][], color: string) => {
+    let cx = 0
+    let cy = 0
+    for (const [r, c] of pos) { cx += c + 0.5; cy += r + 0.5 }
+    cx = (cx / pos.length) * (100 / n)
+    cy = (cy / pos.length) * (100 / n)
+    let angle = 0
+    let wPct = 100 / n
+    if (pos.length > 1) {
+      const [r0, c0] = pos[0]
+      const [r1, c1] = pos[pos.length - 1]
+      const steps = pos.length - 1
+      const unitR = (r1 - r0) / steps
+      const unitC = (c1 - c0) / steps
+      angle = Math.atan2(unitR, unitC) * 180 / Math.PI
+      wPct = (steps * Math.sqrt(unitR * unitR + unitC * unitC) + 1) * (100 / n)
+    }
+    return { cx, cy, wPct, angle, color }
+  }
   const capsules = gameWords
     .filter(gw => foundWords.includes(gw.word) && gw.positions.length > 0)
-    .map(gw => {
-      const color = HIGHLIGHT_COLORS[gw.category] || '#8E44AD'
-      const pos = gw.positions
-      let cx = 0
-      let cy = 0
-      for (const [r, c] of pos) { cx += c + 0.5; cy += r + 0.5 }
-      cx = (cx / pos.length) * (100 / n)
-      cy = (cy / pos.length) * (100 / n)
-      let angle = 0
-      let wPct = 100 / n
-      if (pos.length > 1) {
-        const [r0, c0] = pos[0]
-        const [r1, c1] = pos[1]
-        const dr = r1 - r0
-        const dc = c1 - c0
-        angle = Math.atan2(dr, dc) * 180 / Math.PI
-        wPct = ((pos.length - 1) * Math.sqrt(dr * dr + dc * dc) + 1) * (100 / n)
-      }
-      return { key: gw.word, cx, cy, wPct, angle, color }
-    })
+    .map(gw => ({ key: gw.word, ...capsuleFor(gw.positions, HIGHLIGHT_COLORS[gw.category] || '#8E44AD') }))
+
+  /* Cápsula de selección en curso (drag o hint/reveal) */
+  const selPos: [number, number][] = []
+  for (let r = 0; r < cells.length; r++) {
+    for (let c = 0; c < cells[r].length; c++) {
+      if (cells[r][c].selected || cells[r][c].highlighted) selPos.push([r, c])
+    }
+  }
+  const selCapsule = selPos.length > 0 ? capsuleFor(selPos, 'rgba(255, 193, 7, 0.55)') : null
 
   const handlePointerMove = useCallback((e: React.PointerEvent) => {
     if (!gridRef.current) return
@@ -167,7 +176,7 @@ function Board({ cells, onCellPointerDown, onCellPointerEnter, onCellPointerUp, 
                     isFound
                       ? 'text-white relative z-[1] drop-shadow-[0_1px_3px_rgba(0,0,0,0.55)]'
                       : isSelected
-                        ? 'bg-yellow-neon text-black rounded-lg scale-105 shadow-[0_0_14px_rgba(255,193,7,0.5)] ring-2 ring-yellow-neon/60 relative z-[1]'
+                        ? 'text-stone-900 relative z-[1]'
                         : 'text-stone-900 hover:bg-black/[0.06] hover:rounded-lg'
                   }`}
                 >
@@ -196,6 +205,24 @@ function Board({ cells, onCellPointerDown, onCellPointerEnter, onCellPointerUp, 
               }}
             />
           ))}
+
+          {/* Cápsula de selección en curso (drag) */}
+          {selCapsule && (
+            <div
+              className="absolute"
+              style={{
+                left: `${selCapsule.cx}%`,
+                top: `${selCapsule.cy}%`,
+                width: `${selCapsule.wPct}%`,
+                height: `${100 / n}%`,
+                transform: `translate(-50%, -50%) rotate(${selCapsule.angle}deg)`,
+                background: 'rgba(255, 193, 7, 0.55)',
+                borderRadius: '9999px',
+                border: '2px solid rgba(255, 193, 7, 0.85)',
+                boxShadow: '0 2px 10px rgba(255,193,7,0.45), inset 0 1px 0 rgba(255,255,255,0.35)',
+              }}
+            />
+          )}
         </div>
       </div>
     </div>
