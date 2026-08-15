@@ -1,10 +1,10 @@
 /**
  * Data Index — Combina todas las palabras del juego
  *
- * words.ts tiene 396 palabras (breaking, mcing, djing)
- * words-extra.ts tiene 69 palabras (graffiti, cultura, historia, beatbox, produccion, chile)
+ * words.ts tiene 390 palabras (breaking, mcing, djing)
+ * words-extra.ts tiene 66 palabras (graffiti, cultura, historia, beatbox, produccion, chile)
  *
- * Total: 465 palabras únicas en 9 categorías
+ * Total: 456 palabras únicas en 9 categorías — auditoría factual ago-2026 (sin dudosas)
  */
 import { words as baseWords, categories } from './words'
 import { extraWords } from './words-extra'
