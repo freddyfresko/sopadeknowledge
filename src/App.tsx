@@ -144,14 +144,14 @@ function Board({ cells, onCellPointerDown, onCellPointerEnter, onCellPointerUp, 
     <div className="select-none touch-none" onContextMenu={e => e.preventDefault()}>
       <div
         ref={gridRef}
-        className="relative mx-auto rounded-3xl bg-bg-elevated/50 backdrop-blur-sm border border-border-card p-2.5 shadow-[0_10px_36px_rgba(0,0,0,0.35)]"
+        className="relative mx-auto rounded-3xl bg-gradient-to-b from-white to-stone-100 p-2.5 border border-black/5 shadow-[0_10px_36px_rgba(0,0,0,0.4)]"
         style={{ maxWidth: '100%' }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={onCellPointerUp}
         onPointerLeave={onCellPointerUp}
       >
-        {/* Fichas de letras */}
+        {/* Letras sobre el tablero (sin celdas visibles) */}
         <div className="grid gap-0" style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` }}>
           {cells.map((row, r) =>
             row.map((cell, c) => {
@@ -163,21 +163,15 @@ function Board({ cells, onCellPointerDown, onCellPointerEnter, onCellPointerUp, 
                   data-r={r}
                   data-c={c}
                   role="gridcell"
-                  className="aspect-square p-[2px] cursor-pointer select-none"
+                  className={`aspect-square flex items-center justify-center text-sm md:text-base lg:text-lg font-extrabold transition-all duration-100 cursor-pointer select-none ${
+                    isFound
+                      ? 'text-white relative z-[1] drop-shadow-[0_1px_3px_rgba(0,0,0,0.55)]'
+                      : isSelected
+                        ? 'bg-yellow-neon text-black rounded-lg scale-105 shadow-[0_0_14px_rgba(255,193,7,0.5)] ring-2 ring-yellow-neon/60 relative z-[1]'
+                        : 'text-stone-900 hover:bg-black/[0.06] hover:rounded-lg'
+                  }`}
                 >
-                  <div
-                    data-r={r}
-                    data-c={c}
-                    className={`w-full h-full rounded-[10px] flex items-center justify-center text-sm md:text-base lg:text-lg font-extrabold transition-all duration-100 ${
-                      isFound
-                        ? 'text-white relative z-[1] drop-shadow-[0_1px_3px_rgba(0,0,0,0.55)]'
-                        : isSelected
-                          ? 'bg-yellow-neon text-black relative z-[1] scale-105 shadow-[0_0_14px_rgba(255,193,7,0.5)] ring-2 ring-yellow-neon/60'
-                          : 'bg-white/95 text-black shadow-[0_1px_2px_rgba(0,0,0,0.22)] hover:bg-yellow-neon/15 hover:text-white'
-                    }`}
-                  >
-                    {cell.letter}
-                  </div>
+                  {cell.letter}
                 </div>
               )
             })
