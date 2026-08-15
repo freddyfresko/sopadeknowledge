@@ -349,15 +349,17 @@ function LevelUpModal({ newLevel, onClose }: { newLevel: number; onClose: () => 
 
 /* ─── Level Complete Modal ─── */
 
-function LevelComplete({ foundCount, totalWords, elapsedSeconds, onNext, onSummary, mode }: {
-  foundCount: number; totalWords: number; elapsedSeconds: number
-  onNext: () => void; onSummary: () => void; mode: string
+function LevelComplete({ foundCount, totalWords, stageSeconds, onNext, onSummary, mode, bestTime }: {
+  foundCount: number; totalWords: number; stageSeconds: number
+  onNext: () => void; onSummary: () => void; mode: string; bestTime?: number
 }) {
   const earnedXp = foundCount * 20
   const precision = totalWords > 0 ? Math.round((foundCount / totalWords) * 100) : 0
   const earnedCoins = foundCount * 25
   const earnedKnowledge = foundCount
-  const timeStr = `${String(Math.floor(elapsedSeconds / 60)).padStart(2, '0')}:${String(elapsedSeconds % 60).padStart(2, '0')}`
+  const timeStr = `${String(Math.floor(stageSeconds / 60)).padStart(2, '0')}:${String(stageSeconds % 60).padStart(2, '0')}`
+  // Récord personal: mejor tiempo de etapa en este modo (menos = mejor).
+  const isRecord = bestTime == null || stageSeconds < bestTime
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm overflow-y-auto">
       <div className="card-enter relative my-auto max-w-sm w-full rounded-2xl overflow-hidden border border-yellow-neon/20 bg-bg-card shadow-[0_24px_64px_rgba(0,0,0,0.45)] text-center">
@@ -390,6 +392,9 @@ function LevelComplete({ foundCount, totalWords, elapsedSeconds, onNext, onSumma
             <div className="bg-bg-elevated/60 rounded-lg py-2.5 px-2 border border-border-card">
               <div className="text-overline text-[8px] text-text-muted mb-1">Tiempo</div>
               <div className="text-base font-bold text-white font-mono">{timeStr}</div>
+              {isRecord && (
+                <div className="text-[8px] text-yellow-neon font-bold mt-0.5 uppercase tracking-wider">🏆 ¡Récord!</div>
+              )}
             </div>
             <div className="bg-bg-elevated/60 rounded-lg py-2.5 px-2 border border-border-card">
               <div className="text-overline text-[8px] text-text-muted mb-1">Precisión</div>
@@ -508,6 +513,40 @@ function GameOver({ foundCount, totalWords, mode, onRetry, onExit }: {
         <div className="flex gap-2 px-5 pb-5">
           <Button variant="primary" onClick={onRetry} className="flex-1">Reintentar</Button>
           <Button variant="ghost" onClick={onExit} className="flex-1">Salir</Button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ─── Reset Progress Modal (empezar de 0) ─── */
+
+function ResetConfirmModal({ onCancel, onConfirm }: { onCancel: () => void; onConfirm: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto" onClick={onCancel}>
+      <div className="card-enter relative my-auto max-w-sm w-full rounded-2xl border border-red-500/30 p-6 bg-bg-card text-center shadow-[0_24px_64px_rgba(0,0,0,0.45)]" onClick={e => e.stopPropagation()}>
+        <div className="absolute -inset-1 bg-gradient-to-b from-red-500/10 to-transparent rounded-3xl pointer-events-none" />
+        <div className="relative">
+          <div className="text-4xl mb-2">🗑️</div>
+          <h2 className="text-heading text-base text-red-400 mb-2 uppercase tracking-wider">¿Reiniciar progreso?</h2>
+          <p className="text-xs text-text-secondary mb-5 leading-relaxed">
+            Se borrará <span className="text-white font-bold">todo</span> tu progreso:
+            palabras, XP, monedas, logros y ranking de este juego. No se puede deshacer.
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={onCancel}
+              className="flex-1 py-3 bg-white/5 text-text-secondary text-heading text-sm uppercase tracking-wider rounded-xl hover:bg-white/10 transition-colors border border-border-subtle"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={onConfirm}
+              className="flex-1 py-3 bg-red-500 text-white text-heading text-sm uppercase tracking-wider rounded-xl btn-3d hover:brightness-110 font-bold"
+            >
+              Sí, reiniciar
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -837,6 +876,7 @@ export default function App() {
     leveledUp, newLevel, newCategories,
     handleFindWord, handleNewGame,
     handleClaimDaily, handleUsePowerUp, handleBuyPowerUp,
+    handleResetProgress, handleRecordStageTime,
     clearPendingAchievements, clearLevelUp,
   } = useProgression()
 
@@ -921,7 +961,20 @@ export default function App() {
       void (async () => {
         try {
           const remote = await syncFromLobby(lobbyRef.current)
-          if (remote) {
+          const resetPending = localStorage.getItem('sopa_reset_pending')
+          if (remote && resetPending) {
+            // Reset local reciente (bandera activa) pero el lobby aún tiene
+            // estado pre-reset (el reset del server no llegó o un save viejo
+            // en vuelo lo re-subió). El merge normal usaría Math.max y
+            // reviviría el progreso viejo. La verdad es el LOCAL post-reset:
+            // lo dejamos como está y sobre-escribimos el server con él.
+            const local = loadProgress()
+            console.log('[Sopa App] reset pendiente — ignorando remoto viejo, subiendo estado post-reset al lobby')
+            saveProgress(local)
+            window.dispatchEvent(new CustomEvent('sopa-progress-sync', { detail: local }))
+            const saved = await syncToLobby(lobbyRef.current, local)
+            if (saved.success) localStorage.removeItem('sopa_reset_pending')
+          } else if (remote) {
             const local = loadProgress()
             const merged = mergeProgress(local, remote)
             saveProgress(merged)
@@ -975,12 +1028,23 @@ export default function App() {
   const [gameMode, setGameMode] = useState<string>('classic')
   const [gameStarted, setGameStarted] = useState(false)
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
+  // Cronómetro de la ETAPA actual: se resetea en cada newGame() (cada
+  // tablero nuevo) y se congela al completar la etapa. Sirve para el
+  // ranking de tiempos por etapas (los tiempos de etapa viajan en el
+  // metadata del game_completed al lobby).
+  const [stageSeconds, setStageSeconds] = useState(0)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  // Congela el cronómetro cuando la etapa está completa o la partida terminó
+  // (el modal de victoria/derrota está abierto — el tiempo NO debe seguir).
+  const pauseTimerRef = useRef(false)
   // XP acumulado al inicio de la partida actual — para reportar al lobby el
   // score REAL de esta partida (progreso.xp - xpInicial), no el total histórico.
   const startXpRef = useRef(0)
   // Niveles completados en esta partida (para metadata + completed).
   const sessionLevelsRef = useRef(0)
+  // Tiempos (segundos) de cada etapa completada en ESTA partida — se
+  // mandan al lobby en metadata.stageTimes para el ranking por etapas.
+  const stageTimesRef = useRef<number[]>([])
   // Guard: solo UN game_completed por partida (el lobby ignora el segundo).
   const gameCompletedRef = useRef(false)
   // Ref del progress para usarlo dentro de useCallbacks sin agregar deps.
@@ -988,6 +1052,7 @@ export default function App() {
   progressRef.current = progress
   const [showUnlock, setShowUnlock] = useState<string[] | null>(null)
   const [showLevelUp, setShowLevelUp] = useState(false)
+  const [confirmReset, setConfirmReset] = useState(false)
   const [showHintModal, setShowHintModal] = useState(false)
   const [scorePopups, setScorePopups] = useState<{ id: number; amount: number; x: number; y: number }[]>([])
   const [particles, setParticles] = useState<{ id: number; x: number; y: number }[]>([])
@@ -1039,7 +1104,10 @@ export default function App() {
       setGameOver(false)
 
       timerRef.current = setInterval(() => {
+        // Etapa completa o partida terminada → cronómetro congelado
+        if (pauseTimerRef.current) return
         setElapsedSeconds(s => s + 1)
+        setStageSeconds(s => s + 1)
 
         if (gameMode === 'timed') {
           setTimeRemaining(prev => {
@@ -1185,6 +1253,8 @@ export default function App() {
     setFoundWords(new Set())
     setWordPopup(null)
     setRevealedWord(null)
+    // Nueva etapa → el cronómetro de etapa parte de 0.
+    setStageSeconds(0)
     handleNewGame(gameMode)
   }, [progress.unlockedCategories, gameMode, handleNewGame])
 
@@ -1195,6 +1265,7 @@ export default function App() {
     // resetear contadores y avisar al lobby con el modo como difficulty. ───
     startXpRef.current = progressRef.current.xp
     sessionLevelsRef.current = 0
+    stageTimesRef.current = []
     gameCompletedRef.current = false
     lobbyRef.current?.sendGameStarted({ difficulty: gameMode })
   }, [newGame, gameMode])
@@ -1216,6 +1287,9 @@ export default function App() {
         mode: gameMode,
         levelsCompleted: sessionLevelsRef.current,
         time: elapsedSeconds,
+        // Tiempos de cada etapa completada — el lobby los persiste en
+        // game_sessions.metadata (merge JSONB) → base del ranking por etapas.
+        stageTimes: stageTimesRef.current,
       },
     })
   }, [elapsedSeconds, gameMode])
@@ -1228,6 +1302,36 @@ export default function App() {
     if (sessionLevelsRef.current > 0) finishPartida(true)
     setGameStarted(false)
   }, [finishPartida])
+
+  /* ─── Reiniciar progreso (empezar de 0) ─── */
+
+  const handleConfirmReset = useCallback(async () => {
+    // 1) Lobby: borra TODO el progreso del usuario en Supabase.
+    //    confirm: true es OBLIGATORIO (el lobby rechaza sin él).
+    //    Invitado/standalone → el lobby responde error: seguimos con el
+    //    reset local igual (localStorage es el cache del juego).
+    try {
+      const res = await lobbyRef.current?.resetProgress({ confirm: true })
+      if (res && !res.success) {
+        console.warn('[Sopa] El lobby rechazó el reset:', res.error)
+      }
+    } catch (err) {
+      console.warn('[Sopa] resetProgress del lobby falló (¿invitado/standalone?):', err)
+    }
+    // 2) Reset local: estado React + localStorage → juego como recién instalado.
+    handleResetProgress()
+    // Bandera: mientras exista, al cargar progreso del lobby IGNORAMOS el
+    // remoto si sigue con el estado pre-reset (merge usa Math.max y
+    // reviviría la experiencia vieja si el reset del server no llegó:
+    // invitado, standalone o RPC caída). Se limpia al primer save exitoso
+    // post-reset (syncToLobby).
+    localStorage.setItem('sopa_reset_pending', '1')
+    setPlaying(false)
+    setGameStarted(false)
+    setGameOver(false)
+    setScreen('home')
+    setConfirmReset(false)
+  }, [handleResetProgress])
 
   /* ─── Power-up handlers ─── */
 
@@ -1296,14 +1400,19 @@ export default function App() {
     wordsFound: stats.wordsFound,
   }
 
+  const allFound = foundWords.size === game.words.length && foundWords.size > 0 && !gameOver
+  const timedMode = gameMode === 'timed' || gameMode === 'survival'
+
+  // Sincroniza el guard del cronómetro: etapa completa o game over → pausa.
+  useEffect(() => {
+    pauseTimerRef.current = allFound || gameOver
+  }, [allFound, gameOver])
+
   /* ─── Render ─── */
 
   if (!splashDone) {
     return <SplashScreen onFinish={() => { setSplashDone(true); audio.init() }} />
   }
-
-  const allFound = foundWords.size === game.words.length && foundWords.size > 0 && !gameOver
-  const timedMode = gameMode === 'timed' || gameMode === 'survival'
 
   return (
     <div
@@ -1382,7 +1491,7 @@ export default function App() {
                   💡 Pista
                 </button>
                 <span className="text-text-muted font-mono text-[10px]">
-                  ⏱ {String(Math.floor(elapsedSeconds / 60)).padStart(2, '0')}:{String(elapsedSeconds % 60).padStart(2, '0')}
+                  ⏱ {String(Math.floor(stageSeconds / 60)).padStart(2, '0')}:{String(stageSeconds % 60).padStart(2, '0')}
                 </span>
                 <button onClick={newGame} className="flex items-center gap-1 bg-bg-elevated/60 px-3 py-1.5 rounded-lg border border-border-card hover:bg-white/10 transition-colors text-text-secondary">
                   🔀 Mezclar
@@ -1416,7 +1525,7 @@ export default function App() {
         />
       )) : (
         <>
-          <Header stats={headerStats} onEncyclopedia={() => setScreen('collection')} onReset={newGame} />
+          <Header stats={headerStats} onEncyclopedia={() => setScreen('collection')} onReset={() => setConfirmReset(true)} />
           <div className="flex-1 flex flex-col overflow-y-auto pb-16">
             {screen === 'home' && (
               <HomeScreen
@@ -1430,10 +1539,10 @@ export default function App() {
             )}
             {screen === 'categories' && <CategoriesScreen progress={progress} />}
             {screen === 'collection' && <CollectionScreen progress={progress} onBack={() => setScreen('home')} />}
-            {screen === 'profile' && <ProfileScreen progress={progress} stats={stats} lobbyCtx={lobbyCtx} />}
+            {screen === 'profile' && <ProfileScreen progress={progress} stats={stats} lobbyCtx={lobbyCtx} onResetProgress={() => setConfirmReset(true)} />}
             {screen === 'store' && <StoreScreen progress={progress} onBack={() => setScreen('home')} onBuy={handleBuy} />}
             {screen === 'challenges' && <ChallengesScreen progress={progress} onBack={() => setScreen('home')} onClaimDaily={handleClaimDaily} />}
-            {screen === 'modes' && <ModesScreen onBack={() => setScreen('home')} onSelect={(m) => { setGameMode(m); setPlaying(true); setGameStarted(false) }} />}
+            {screen === 'modes' && <ModesScreen onBack={() => setScreen('home')} bestTimes={progress.bestStageTimes} onSelect={(m) => { setGameMode(m); setPlaying(true); setGameStarted(false) }} />}
             {screen === 'story' && <StoryScreen onBack={() => setScreen('home')} />}
             {screen === 'settings' && <SettingsScreen onBack={() => setScreen('home')} />}
           </div>
@@ -1443,6 +1552,12 @@ export default function App() {
 
       {/* Modals */}
       <KnowledgeModal word={wordPopup} onClose={() => setWordPopup(null)} />
+      {confirmReset && (
+        <ResetConfirmModal
+          onCancel={() => setConfirmReset(false)}
+          onConfirm={() => { void handleConfirmReset() }}
+        />
+      )}
       {showUnlock && <CategoryUnlock newCategories={showUnlock} onClose={() => setShowUnlock(null)} />}
       {showLevelUp && <LevelUpModal newLevel={newLevel} onClose={() => { setShowLevelUp(false); clearLevelUp() }} />}
       {pendingAchievements.length > 0 && (
@@ -1452,12 +1567,17 @@ export default function App() {
         <LevelComplete
           foundCount={foundWords.size}
           totalWords={game.words.length}
-          elapsedSeconds={elapsedSeconds}
+          stageSeconds={stageSeconds}
           mode={gameMode}
+          bestTime={progress.bestStageTimes?.[gameMode]}
           onNext={async () => {
             // Nivel completado: la partida SIGUE (misma sesión). El
             // game_completed va al final, UNA vez por partida.
             sessionLevelsRef.current += 1
+            // Tiempo de la etapa completada (cronómetro congelado) →
+            // ranking de tiempos por etapas (local + lobby).
+            stageTimesRef.current.push(stageSeconds)
+            handleRecordStageTime(gameMode, stageSeconds)
             // Ad interstitial entre niveles (placements: game_level_complete).
             // Si el lobby no tiene campaña, resuelve de inmediato y sigue.
             try {
@@ -1466,12 +1586,17 @@ export default function App() {
                 rewardIds: [],
               })
             } catch { /* timeout o sin campaña — seguir */ }
-            newGame(); setGameStarted(false)
+            // Siguiente etapa: nuevo tablero, misma partida (el cronómetro
+            // se reanuda solo al bajar allFound). NO salir al hub.
+            newGame()
           }}
           onSummary={async () => {
             // Partida terminada con éxito: UN game_completed con el score
             // total ganado en ella (completed SIEMPRE explícito).
             sessionLevelsRef.current += 1
+            // Última etapa: registrar su tiempo (ranking por etapas).
+            stageTimesRef.current.push(stageSeconds)
+            handleRecordStageTime(gameMode, stageSeconds)
             finishPartida(true)
             try {
               await lobbyRef.current?.requestCampaign({

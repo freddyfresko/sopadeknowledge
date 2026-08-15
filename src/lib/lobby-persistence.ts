@@ -15,6 +15,7 @@
 
 import type { PlayerProgress } from '../game/types'
 import { getLevel } from '../game/progression'
+import { allWords } from '../data/index'
 import type { LobbyClientInstance } from './sdk/lobby-client'
 
 const GAME_ID = 'sopa'
@@ -32,6 +33,7 @@ interface SopaState {
   knowledgePoints: number
   powerUps: PlayerProgress['powerUps']
   achievements: PlayerProgress['achievements']
+  bestStageTimes: Record<string, number>
   profile: PlayerProgress['profile']
 }
 
@@ -48,6 +50,7 @@ function toSopaState(p: PlayerProgress): SopaState {
     knowledgePoints: p.knowledgePoints,
     powerUps: p.powerUps,
     achievements: p.achievements,
+    bestStageTimes: p.bestStageTimes ?? {},
     profile: p.profile,
   }
 }
@@ -73,6 +76,7 @@ function fromSopaState(s: SopaState, bestScore?: number): PlayerProgress {
     gems: 0,
     powerUps: s.powerUps ?? { hint: 0, reveal: 0, shuffle: 0, freeze: 0, eliminate: 0 },
     achievements: s.achievements ?? [],
+    bestStageTimes: s.bestStageTimes ?? {},
     profile: s.profile ?? {
       displayName: 'BBOYKNOWLEDGE',
       avatarEmoji: '🧢',
@@ -117,6 +121,13 @@ export async function syncToLobby(
     const result = await lobby.saveProgress({
       gameState: toSopaState(progress) as unknown as Record<string, unknown>,
       score: progress.xp,
+      // Progreso REAL para las cards del lobby (protocolo v2): el avance
+      // del juego, no partidas jugadas. Sin esto el lobby cae al fallback.
+      progress: {
+        current: progress.wordsFound.length,
+        total: allWords.length,
+        label: 'Palabras',
+      },
       metadata: {
         game: GAME_ID,
         schemaVersion: SCHEMA_VERSION,
@@ -130,6 +141,10 @@ export async function syncToLobby(
       console.warn('[Sopa] El lobby reportó error al guardar:', result.error)
       return { success: false, message: result.error ?? 'Error en el lobby' }
     }
+
+    // El server ya tiene el estado post-reset → la bandera de reset ya no
+    // es necesaria (el remoto ya no puede revivir el progreso viejo).
+    localStorage.removeItem('sopa_reset_pending')
 
     return { success: true, message: 'Guardado en el lobby' }
   } catch (err) {
@@ -203,9 +218,51 @@ export function mergeProgress(local: PlayerProgress, remote: PlayerProgress): Pl
     knowledgePoints: Math.max(local.knowledgePoints, remote.knowledgePoints),
     gems: Math.max(local.gems, remote.gems),
     powerUps: { ...local.powerUps },
-    achievements: local.achievements ?? [],
+    achievements: mergeAchievements(local.achievements, remote.achievements),
+    bestStageTimes: mergeBestStageTimes(local.bestStageTimes ?? {}, remote.bestStageTimes ?? {}),
     profile: { ...local.profile },
   }
+}
+
+/**
+ * Une los mejores tiempos de etapa por modo: por cada modo se queda con
+ * el MENOR tiempo (menos segundos = mejor) de cualquiera de los dos lados.
+ */
+function mergeBestStageTimes(
+  local: Record<string, number>,
+  remote: Record<string, number>,
+): Record<string, number> {
+  const merged: Record<string, number> = { ...local }
+  for (const [mode, seconds] of Object.entries(remote)) {
+    const cur = merged[mode]
+    if (cur == null || seconds < cur) merged[mode] = seconds
+  }
+  return merged
+}
+
+/**
+ * Une logros local+remoto con semántica de unión: un logro queda
+ * completado/reclamado si CUALQUIERA de los dos lados lo tiene. Evita
+ * que un logro ya desbloqueado (ej: en otro dispositivo, vía el estado
+ * que el juego guarda en el lobby) se vuelva a "desbloquear" en el
+ * juego y se muestre como nuevo en la notificación.
+ */
+function mergeAchievements(
+  local: PlayerProgress['achievements'],
+  remote: PlayerProgress['achievements'],
+): PlayerProgress['achievements'] {
+  const remoteById = new Map(remote.map((a) => [a.id, a]))
+  return local.map((a) => {
+    const r = remoteById.get(a.id)
+    if (!r) return a
+    return {
+      id: a.id,
+      current: Math.max(a.current, r.current),
+      completed: a.completed || r.completed,
+      claimed: a.claimed || r.claimed,
+      completedAt: a.completedAt ?? r.completedAt,
+    }
+  })
 }
 
 function mergeWordsFound(
