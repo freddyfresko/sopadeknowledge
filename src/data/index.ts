@@ -1,13 +1,23 @@
 /**
- * Data Index — Combina todas las palabras del juego
+ * Data Index — combina el contenido GENERADO desde la ENCICLOPEDIA
+ * (fuente de la verdad) con el contenido legacy de la Sopa.
  *
- * words.ts tiene 390 palabras (breaking, mcing, djing)
- * words-extra.ts tiene 66 palabras (graffiti, cultura, historia, beatbox, produccion, chile)
+ * words.generated.ts → generado por Enciclopedia HH/scripts/generar_sopa.py
+ * words.ts / words-extra.ts → legacy manual (se migra a la enciclopedia
+ *   progresivamente; hasta entonces se conserva como puente)
  *
- * Total: 456 palabras únicas en 9 categorías — auditoría factual ago-2026 (sin dudosas)
+ * DEDUP: la enciclopedia manda — si un word legacy duplica uno generado,
+ * gana el generado (también resuelve los homónimos legacy por disciplina).
  */
 import { words as baseWords, categories } from './words'
 import { extraWords } from './words-extra'
+import { generatedWords } from './words.generated'
 
-export const allWords = [...baseWords, ...extraWords]
+const seen = new Set<string>()
+export const allWords = [...generatedWords, ...baseWords, ...extraWords].filter((w) => {
+  const key = w.word.toUpperCase()
+  if (seen.has(key)) return false
+  seen.add(key)
+  return true
+})
 export { categories }
