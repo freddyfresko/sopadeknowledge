@@ -97,6 +97,17 @@ export function addXp(progress: PlayerProgress, amount: number, wordDifficulty?:
 
   // Check new achievements
   const newAchievements = checkAchievements(p)
+  if (newAchievements.length > 0) {
+    // Acreditar las recompensas anunciadas (xpReward/coinReward). Sin esto,
+    // el modal dice "+25 XP / 🪙 +50" pero nada se suma (bug detectado en QA).
+    const achXp = newAchievements.reduce((sum, a) => sum + (a.xpReward || 0), 0)
+    const achCoins = newAchievements.reduce((sum, a) => sum + (a.coinReward || 0), 0)
+    if (achXp > 0 || achCoins > 0) {
+      p = { ...p, xp: p.xp + achXp, coins: (p.coins || 0) + achCoins }
+      p.level = getLevel(p.xp)
+      p.unlockedCategories = getUnlockedCategories(p.level)
+    }
+  }
 
   return { progress: p, leveledUp, newlyUnlockedCategories: [], newAchievements, coinsEarned }
 }

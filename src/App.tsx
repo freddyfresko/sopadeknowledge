@@ -19,8 +19,8 @@ import SplashScreen from './components/SplashScreen'
 import ScorePopup from './components/ScorePopup'
 import ParticleBurst from './components/ParticleBurst'
 import {
-  StoreScreen, ChallengesScreen, ModesScreen, StoryScreen,
-  CollectionScreen, ProfileScreen, SettingsScreen,
+  StoreScreen, ChallengesScreen,
+  CollectionScreen, ProfileScreen,
   AchievementNotification,
 } from './screens'
 import useAudio from './hooks/useAudio'
@@ -555,11 +555,11 @@ function ResetConfirmModal({ onCancel, onConfirm }: { onCancel: () => void; onCo
 
 /* ─── Hall Sopa — pantalla única de entrada (fusión Home + Hub) ─── */
 
-function HallScreen({ progress, stats, onStartGame, selectedMode, onChangeMode, onStore, onKnowledge, onDaily }: {
+function HallScreen({ progress, stats, onStartGame, selectedMode, onChangeMode, onStore, onDaily }: {
   progress: { level: number; xp: number; unlockedCategories: string[]; wordsFound: FoundWord[]; coins?: number; knowledgePoints?: number; dailyStreak: number; totalWordsFound: number; totalGames: number }
   stats: { currentXp: number; level: number; xpForNext: number; rank: { icon: string; name: string; color: string } }
   onStartGame: () => void; selectedMode: string; onChangeMode: (mode: string) => void
-  onStore: () => void; onKnowledge: () => void; onDaily: () => void
+  onStore: () => void; onDaily: () => void
 }) {
   const catProgress = categories.map(cat => {
     const count = progress.wordsFound.filter(fw => fw.category === cat.id).length
@@ -573,8 +573,7 @@ function HallScreen({ progress, stats, onStartGame, selectedMode, onChangeMode, 
     classic: { name: 'Clásico', icon: '🎮' },
     timed: { name: 'Contrarreloj', icon: '⏱️' },
     survival: { name: 'Supervivencia', icon: '💀' },
-    category: { name: 'Por Categoría', icon: '🎯' },
-    daily: { name: 'Desafío Diario', icon: '⭐' },
+    daily: { name: 'Sopa Diaria', icon: '⭐' },
   }
 
   return (
@@ -597,7 +596,7 @@ function HallScreen({ progress, stats, onStartGame, selectedMode, onChangeMode, 
         </div>
 
         {/* Mode selector — responsive grid (sin scroll horizontal) */}
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 gap-2">
           {Object.entries(modeLabels).map(([id, m]) => {
             const isActive = selectedMode === id
             return (
@@ -669,18 +668,14 @@ function HallScreen({ progress, stats, onStartGame, selectedMode, onChangeMode, 
         </Button>
 
         {/* Quick access */}
-        <div className="grid grid-cols-3 gap-2">
-          <button onClick={onKnowledge} className="flex flex-col items-center justify-center gap-1 bg-bg-card rounded-xl border border-border-card py-3 hover:bg-white/5 transition-all btn-3d">
-            <IconBook size={18} className="text-yellow-neon" />
-            <span className="text-[9px] font-bold uppercase tracking-wider text-text-secondary">Mi Knowledge</span>
-          </button>
+        <div className="grid grid-cols-2 gap-2">
           <button onClick={onStore} className="flex flex-col items-center justify-center gap-1 bg-bg-card rounded-xl border border-border-card py-3 hover:bg-white/5 transition-all btn-3d">
             <IconCart size={18} className="text-yellow-neon" />
             <span className="text-[9px] font-bold uppercase tracking-wider text-text-secondary">Tienda</span>
           </button>
           <button onClick={onDaily} className="flex flex-col items-center justify-center gap-1 bg-bg-card rounded-xl border border-border-card py-3 hover:bg-white/5 transition-all btn-3d">
             <IconStar size={18} className="text-orange-400" />
-            <span className="text-[9px] font-bold uppercase tracking-wider text-text-secondary">Desafíos</span>
+            <span className="text-[9px] font-bold uppercase tracking-wider text-text-secondary">Recompensas</span>
           </button>
         </div>
 
@@ -1397,7 +1392,6 @@ export default function App() {
               <span className="text-white/20">|</span>
               <span className="text-yellow-neon font-bold">🪙 {progress.coins || 0}</span>
             </div>
-            <button onClick={() => newGame()} className="text-xs bg-white/5 hover:bg-white/10 px-2 py-1.5 rounded-lg transition-colors text-text-muted" title="Nuevo juego">🔄</button>
           </div>
 
           <div className="flex-1 flex flex-col justify-center overflow-y-auto bg-bg-primary">
@@ -1405,9 +1399,8 @@ export default function App() {
               <div className="w-full max-w-[96vw] flex items-center justify-between px-3 py-2">
                 <div className="flex items-center gap-2">
                   <span className="text-purple-400 text-sm">🕺</span>
-                  <span className="text-[9px] text-text-muted uppercase tracking-wider font-semibold">Modo {gameMode === 'classic' ? 'Clásico' : gameMode === 'timed' ? 'Contrarreloj' : gameMode === 'survival' ? 'Supervivencia' : gameMode === 'daily' ? 'Diario' : 'Categoría'}</span>
+                  <span className="text-[9px] text-text-muted uppercase tracking-wider font-semibold">Modo {gameMode === 'classic' ? 'Clásico' : gameMode === 'timed' ? 'Contrarreloj' : gameMode === 'survival' ? 'Supervivencia' : 'Sopa Diaria'}</span>
                 </div>
-                <span className="text-[10px] text-text-muted font-mono">{foundWords.size}/{game.words.length}</span>
               </div>
 
               {/* Revealed word label */}
@@ -1439,9 +1432,6 @@ export default function App() {
                 <span className="text-text-muted font-mono text-[10px]">
                   ⏱ {String(Math.floor(stageSeconds / 60)).padStart(2, '0')}:{String(stageSeconds % 60).padStart(2, '0')}
                 </span>
-                <button onClick={() => newGame()} className="flex items-center gap-1 bg-bg-elevated/60 px-3 py-1.5 rounded-lg border border-border-card hover:bg-white/10 transition-colors text-text-secondary">
-                  🔀 Mezclar
-                </button>
               </div>
 
               {/* Word List */}
@@ -1470,26 +1460,26 @@ export default function App() {
               selectedMode={gameMode}
               onChangeMode={setGameMode}
               onStore={() => setScreen('store')}
-              onKnowledge={() => setScreen('collection')}
               onDaily={() => setScreen('challenges')}
             />
           ) : (
             <div className="flex-1 flex flex-col overflow-y-auto pb-16">
               {screen === 'categories' && <CategoriesScreen progress={progress} />}
-              {screen === 'collection' && <CollectionScreen progress={progress} onBack={() => setScreen('home')} />}
+              {screen === 'collection' && <CollectionScreen progress={progress} />}
               {screen === 'profile' && <ProfileScreen progress={progress} stats={stats} lobbyCtx={lobbyCtx} onResetProgress={() => setConfirmReset(true)} />}
-              {screen === 'store' && <StoreScreen progress={progress} onBack={() => setScreen('home')} onBuy={handleBuy} />}
-              {screen === 'challenges' && <ChallengesScreen progress={progress} onBack={() => setScreen('home')} onClaimDaily={handleClaimDaily} />}
-              {screen === 'modes' && <ModesScreen onBack={() => setScreen('home')} bestTimes={progress.bestStageTimes} onSelect={(m) => handleStartGame(m)} />}
-              {screen === 'story' && <StoryScreen onBack={() => setScreen('home')} />}
-              {screen === 'settings' && <SettingsScreen onBack={() => setScreen('home')} />}
+              {screen === 'store' && <StoreScreen progress={progress} onBuy={handleBuy} />}
+              {screen === 'challenges' && <ChallengesScreen progress={progress} onClaimDaily={handleClaimDaily} />}
             </div>
           )}
           <BottomNav active={screen} onChange={setScreen} />
         </>
       )}
 
-      {/* Modals */}
+      {/* Modals — orden: el logro primero en DOM para que el modal de
+          conocimiento de la palabra quede ENCIMA (mismo z-index, último gana) */}
+      {pendingAchievements.length > 0 && (
+        <AchievementNotification achievements={pendingAchievements} onClose={clearPendingAchievements} />
+      )}
       <KnowledgeModal word={wordPopup} onClose={() => setWordPopup(null)} />
       {confirmReset && (
         <ResetConfirmModal
@@ -1499,9 +1489,6 @@ export default function App() {
       )}
       {showUnlock && <CategoryUnlock newCategories={showUnlock} onClose={() => setShowUnlock(null)} />}
       {showLevelUp && <LevelUpModal newLevel={newLevel} onClose={() => { setShowLevelUp(false); clearLevelUp() }} />}
-      {pendingAchievements.length > 0 && (
-        <AchievementNotification achievements={pendingAchievements} onClose={clearPendingAchievements} />
-      )}
       {allFound && (
         <LevelComplete
           foundCount={foundWords.size}
