@@ -29,7 +29,7 @@ import { syncToLobby, syncFromLobby, mergeProgress } from './lib/lobby-persisten
 import { createLobbyClient } from './lib/sdk/lobby-client'
 import type { LobbyClientInstance } from './lib/sdk/lobby-client'
 import type { SessionContextPayload } from './lib/sdk/types'
-import { Button, Card, Chip, Progress, ScreenHeader } from './components/ui'
+import { Button, Card, Progress } from './components/ui'
 import { IconPlay, IconStar, IconBook, IconCart, IconHome, IconGrid, IconProfile, IconHint, IconEye, IconShuffle, IconTrash } from './components/icons'
 
 /* ─── Direction snapping for mobile ─── */
@@ -553,78 +553,158 @@ function ResetConfirmModal({ onCancel, onConfirm }: { onCancel: () => void; onCo
   )
 }
 
-/* ─── Header ─── */
+/* ─── Hall Sopa — pantalla única de entrada (fusión Home + Hub) ─── */
 
-function Header({ stats, onEncyclopedia, onReset }: { stats: { level: number; currentXp: number; xpForNext: number; wordsFound: number }; onEncyclopedia: () => void; onReset: () => void }) {
-  const pct = stats.xpForNext > 0 ? Math.min(100, (stats.currentXp / stats.xpForNext) * 100) : 100
-  return (
-    <header className="bg-bg-card border-b border-border-subtle">
-      <div className="max-w-lg mx-auto w-full flex items-center justify-between px-4 py-3">
-        <div>
-          <h1 className="font-graffiti text-xl md:text-2xl tracking-wide text-yellow-neon">SOPA DE <span className="text-white">KNOWLEDGE</span></h1>
-          <p className="text-[9px] text-text-muted uppercase tracking-[0.15em]">JuegaHipHop</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="text-right">
-            <div className="text-xs font-bold text-white/80">NIVEL {stats.level}</div>
-            <div className="w-20 md:w-28 h-1 bg-white/10 rounded-full mt-1 overflow-hidden">
-              <div className="h-full bg-yellow-neon rounded-full transition-all" style={{ width: `${pct}%` }} />
-            </div>
-          </div>
-          <button onClick={onEncyclopedia} className="text-xs bg-bg-elevated hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors border border-border-card text-text-secondary">📚 {stats.wordsFound}</button>
-          <button onClick={onReset} className="text-xs bg-white/5 hover:bg-white/10 px-2 py-1.5 rounded-lg transition-colors text-text-secondary">🔄</button>
-        </div>
-      </div>
-    </header>
-  )
-}
-
-/* ─── Home Screen ─── */
-
-function HomeScreen({ onPlay, onDaily, onKnowledge, onStore, progress, stats }: {
-  onPlay: () => void; onDaily: () => void; onKnowledge: () => void; onStore: () => void
-  progress: { dailyStreak: number }; stats: { level: number; wordsFound: number }
+function HallScreen({ progress, stats, onStartGame, selectedMode, onChangeMode, onStore, onKnowledge, onDaily }: {
+  progress: { level: number; xp: number; unlockedCategories: string[]; wordsFound: FoundWord[]; coins?: number; knowledgePoints?: number; dailyStreak: number; totalWordsFound: number; totalGames: number }
+  stats: { currentXp: number; level: number; xpForNext: number; rank: { icon: string; name: string; color: string } }
+  onStartGame: () => void; selectedMode: string; onChangeMode: (mode: string) => void
+  onStore: () => void; onKnowledge: () => void; onDaily: () => void
 }) {
+  const catProgress = categories.map(cat => {
+    const count = progress.wordsFound.filter(fw => fw.category === cat.id).length
+    const total = allWords.filter(w => w.category === cat.id).length
+    const unlocked = progress.unlockedCategories.includes(cat.id)
+    return { ...cat, count, total, unlocked }
+  })
+  const unlockedCats = catProgress.filter(c => c.unlocked)
+
+  const modeLabels: Record<string, { name: string; icon: string }> = {
+    classic: { name: 'Clásico', icon: '🎮' },
+    timed: { name: 'Contrarreloj', icon: '⏱️' },
+    survival: { name: 'Supervivencia', icon: '💀' },
+    category: { name: 'Por Categoría', icon: '🎯' },
+    daily: { name: 'Desafío Diario', icon: '⭐' },
+  }
+
   return (
-    <div className="flex-1 flex flex-col items-center justify-center px-6 pb-28 pt-6">
-      <div className="text-center mb-2">
-        <p className="text-overline text-[10px] text-text-muted mb-3">Juega Hip Hop</p>
-      </div>
-      <div className="text-center mb-2 relative">
-        <div className="relative inline-block">
-          <h1 className="text-display text-5xl md:text-6xl leading-none tracking-wide">
+    <div className="flex-1 flex flex-col overflow-y-auto bg-bg-primary">
+      <div className="flex-1 px-4 py-5 max-w-lg mx-auto w-full space-y-4 pb-24">
+        {/* Branding */}
+        <div className="text-center pt-1 pb-1">
+          <p className="text-overline text-[10px] text-text-muted mb-2">Juega Hip Hop</p>
+          <h1 className="text-display text-4xl md:text-5xl leading-none tracking-wide">
             <span className="text-white/90">SOPA DE</span>
           </h1>
           <div className="flex items-center justify-center">
-            <span className="text-display text-5xl md:text-7xl leading-none text-yellow-neon text-stroke-yellow tracking-wide">KNOW</span>
+            <span className="text-display text-4xl md:text-6xl leading-none text-yellow-neon text-stroke-yellow tracking-wide">KNOW</span>
             <span className="relative inline-flex items-center">
-              <span className="text-display text-5xl md:text-7xl leading-none text-yellow-neon text-stroke-yellow tracking-wide">LEDGE</span>
-              <span className="absolute -top-5 -right-2 text-lg md:text-xl drop-shadow-lg" aria-hidden="true">👑</span>
+              <span className="text-display text-4xl md:text-6xl leading-none text-yellow-neon text-stroke-yellow tracking-wide">LEDGE</span>
+              <span className="absolute -top-4 -right-2 text-base md:text-lg drop-shadow-lg" aria-hidden="true">👑</span>
             </span>
           </div>
+          <p className="text-overline text-[11px] text-text-secondary mt-2">Aprende Hip Hop Jugando</p>
         </div>
-      </div>
-      <p className="text-overline text-[11px] text-text-secondary mt-2 mb-7">Aprende Hip Hop Jugando</p>
 
-      <div className="w-full max-w-xs space-y-3">
-        <Button variant="primary" size="lg" fullWidth icon={<IconPlay size={20} />} onClick={onPlay}>
-          Jugar
-        </Button>
-        <Button variant="secondary" size="md" fullWidth icon={<IconStar size={18} />} onClick={onDaily}>
-          Desafíos Diarios
-        </Button>
-        <Button variant="ghost" size="md" fullWidth icon={<IconBook size={18} />} onClick={onKnowledge}>
-          Mi Knowledge
-        </Button>
-        <Button variant="ghost" size="md" fullWidth icon={<IconCart size={18} />} onClick={onStore}>
-          Tienda
-        </Button>
-      </div>
+        {/* Mode selector — responsive grid (sin scroll horizontal) */}
+        <div className="grid grid-cols-3 gap-2">
+          {Object.entries(modeLabels).map(([id, m]) => {
+            const isActive = selectedMode === id
+            return (
+              <button
+                key={id}
+                onClick={() => onChangeMode(id)}
+                className={[
+                  'flex flex-col items-center justify-center gap-1 px-2 py-2.5 rounded-lg',
+                  'text-[10px] font-bold uppercase tracking-wider transition-all',
+                  isActive
+                    ? 'bg-yellow-neon text-black shadow-[0_3px_0_0_var(--btn-shadow-yellow)]'
+                    : 'bg-bg-elevated/60 text-text-secondary border border-border-card hover:bg-white/10',
+                ].join(' ')}
+              >
+                <span className="text-base leading-none">{m.icon}</span>
+                <span className="text-center leading-tight">{m.name}</span>
+              </button>
+            )
+          })}
+        </div>
 
-      <div className="flex gap-2 mt-6">
-        <Chip><span className="text-yellow-neon">✦</span> Nivel {stats.level}</Chip>
-        <Chip><span className="text-yellow-neon">📖</span> {stats.wordsFound} palabras</Chip>
-        <Chip><span className="text-orange-400">🔥</span> {progress.dailyStreak} días</Chip>
+        {/* Player Card */}
+        <Card className="overflow-hidden">
+          <div className="flex items-center gap-4 px-5 pt-5 pb-3">
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-yellow-neon to-purple-neon flex items-center justify-center text-2xl shadow-[var(--shadow-glow-yellow)] flex-shrink-0">
+              🧢
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-heading text-base text-white">Nivel {stats.level}</span>
+                <span className="text-[10px] rounded-full font-semibold uppercase tracking-wider px-2 py-0.5" style={{ color: stats.rank.color, background: `${stats.rank.color}22` }}>
+                  {stats.rank.icon} {stats.rank.name}
+                </span>
+              </div>
+              <div className="mt-2">
+                <div className="flex justify-between text-[10px] text-text-muted mb-1">
+                  <span>✦ {stats.currentXp} XP</span>
+                  <span>{stats.xpForNext} XP</span>
+                </div>
+                <Progress value={stats.currentXp} max={stats.xpForNext} height="md" color="linear-gradient(90deg, #FFC107, #FFE480)" />
+              </div>
+            </div>
+          </div>
+          <div className="grid grid-cols-4 gap-px bg-border-subtle mx-5 mb-4 rounded-xl overflow-hidden">
+            {(
+              [
+                { label: 'Palabras', value: progress.totalWordsFound, icon: '📖', color: 'text-yellow-neon' },
+                { label: 'Monedas', value: progress.coins || 0, icon: '🪙', color: 'text-yellow-neon' },
+                { label: 'Knowledge', value: progress.knowledgePoints || 0, icon: '💎', color: 'text-purple-neon-light' },
+                { label: 'Racha', value: progress.dailyStreak, icon: '🔥', color: 'text-orange-400' },
+              ] as const
+            ).map(s => (
+              <div key={s.label} className="bg-bg-elevated/60 p-2.5 text-center">
+                <div className="text-base mb-0.5">{s.icon}</div>
+                <div className={`text-sm font-bold ${s.color}`}>{s.value}</div>
+                <div className="text-[8px] text-text-muted uppercase tracking-wider mt-0.5">{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        {/* Play Button — inicia las etapas directo desde el hall */}
+        <Button variant="primary" size="lg" fullWidth
+          icon={<IconPlay size={22} />}
+          onClick={onStartGame}
+          className="!text-lg !py-4 !rounded-2xl shadow-[0_6px_20px_rgba(255,193,7,0.25)]"
+        >
+          Comenzar
+        </Button>
+
+        {/* Quick access */}
+        <div className="grid grid-cols-3 gap-2">
+          <button onClick={onKnowledge} className="flex flex-col items-center justify-center gap-1 bg-bg-card rounded-xl border border-border-card py-3 hover:bg-white/5 transition-all btn-3d">
+            <IconBook size={18} className="text-yellow-neon" />
+            <span className="text-[9px] font-bold uppercase tracking-wider text-text-secondary">Mi Knowledge</span>
+          </button>
+          <button onClick={onStore} className="flex flex-col items-center justify-center gap-1 bg-bg-card rounded-xl border border-border-card py-3 hover:bg-white/5 transition-all btn-3d">
+            <IconCart size={18} className="text-yellow-neon" />
+            <span className="text-[9px] font-bold uppercase tracking-wider text-text-secondary">Tienda</span>
+          </button>
+          <button onClick={onDaily} className="flex flex-col items-center justify-center gap-1 bg-bg-card rounded-xl border border-border-card py-3 hover:bg-white/5 transition-all btn-3d">
+            <IconStar size={18} className="text-orange-400" />
+            <span className="text-[9px] font-bold uppercase tracking-wider text-text-secondary">Desafíos</span>
+          </button>
+        </div>
+
+        {/* Categories */}
+        <Card className="px-5 py-4">
+          <h3 className="text-overline text-[10px] text-text-muted mb-3">Progreso por Categoría</h3>
+          <div className="space-y-3">
+            {unlockedCats.slice(0, 5).map(cat => (
+              <div key={cat.id} className="flex items-center gap-2.5">
+                <span className="text-base flex-shrink-0">{cat.icon}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-semibold truncate" style={{ color: cat.color }}>{cat.name}</span>
+                    <span className="text-[9px] text-text-muted flex-shrink-0 ml-2">{cat.count}/{cat.total}</span>
+                  </div>
+                  <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+                    <div className="h-full rounded-full transition-all duration-500" style={{ width: `${cat.total > 0 ? (cat.count / cat.total) * 100 : 0}%`, background: cat.color }} />
+                  </div>
+                </div>
+              </div>
+            ))}
+            {unlockedCats.length === 0 && <p className="text-xs text-text-muted text-center py-2">Desbloquea categorías subiendo de nivel</p>}
+          </div>
+        </Card>
       </div>
     </div>
   )
@@ -673,135 +753,6 @@ function CategoriesScreen({ progress }: { progress: { unlockedCategories: string
         </div>
       </div>
     </div>
-  )
-}
-
-/* ─── Game Hub Screen ─── */
-
-function GameHubScreen({ progress, stats, onStartGame, onBack, selectedMode, onChangeMode }: {
-  progress: { level: number; xp: number; unlockedCategories: string[]; wordsFound: FoundWord[]; coins?: number; knowledgePoints?: number; dailyStreak: number; totalWordsFound: number; totalGames: number }
-  stats: { currentXp: number; level: number; xpForNext: number; rank: { icon: string; name: string; color: string } }
-  onStartGame: () => void; onBack: () => void
-  selectedMode: string; onChangeMode: (mode: string) => void
-}) {
-  const _pctUnused = stats.xpForNext > 0 ? Math.min(100, (stats.currentXp / stats.xpForNext) * 100) : 100
-  void _pctUnused
-
-  const catProgress = categories.map(cat => {
-    const count = progress.wordsFound.filter(fw => fw.category === cat.id).length
-    const total = allWords.filter(w => w.category === cat.id).length
-    const unlocked = progress.unlockedCategories.includes(cat.id)
-    return { ...cat, count, total, unlocked }
-  })
-  const unlockedCats = catProgress.filter(c => c.unlocked)
-
-  const modeLabels: Record<string, { name: string; icon: string }> = {
-    classic: { name: 'Clásico', icon: '🎮' },
-    timed: { name: 'Contrarreloj', icon: '⏱️' },
-    survival: { name: 'Supervivencia', icon: '💀' },
-    category: { name: 'Por Categoría', icon: '🎯' },
-    daily: { name: 'Desafío Diario', icon: '⭐' },
-  }
-
-  return (
-    <div className="flex-1 flex flex-col overflow-y-auto bg-bg-primary">
-      <ScreenHeader title="Sopa de Knowledge" onBack={onBack} right={<div className="w-12" />} />
-        <div className="flex-1 px-4 py-5 max-w-lg mx-auto w-full space-y-4 pb-24">
-          {/* Mode selector — responsive grid (no horizontal scroll truncation) */}
-          <div className="grid grid-cols-3 gap-2">
-            {Object.entries(modeLabels).map(([id, m]) => {
-              const isActive = selectedMode === id
-              return (
-                <button
-                  key={id}
-                  onClick={() => onChangeMode(id)}
-                  className={[
-                    'flex flex-col items-center justify-center gap-1 px-2 py-2.5 rounded-lg',
-                    'text-[10px] font-bold uppercase tracking-wider transition-all',
-                    isActive
-                      ? 'bg-yellow-neon text-black shadow-[0_3px_0_0_var(--btn-shadow-yellow)]'
-                      : 'bg-bg-elevated/60 text-text-secondary border border-border-card hover:bg-white/10',
-                  ].join(' ')}
-                >
-                  <span className="text-base leading-none">{m.icon}</span>
-                  <span className="text-center leading-tight">{m.name}</span>
-                </button>
-              )
-            })}
-          </div>
-
-          {/* Player Card */}
-          <Card className="overflow-hidden">
-            <div className="flex items-center gap-4 px-5 pt-5 pb-3">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-yellow-neon to-purple-neon flex items-center justify-center text-2xl shadow-[var(--shadow-glow-yellow)] flex-shrink-0">
-                🧢
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-heading text-base text-white">Nivel {stats.level}</span>
-                  <span className="text-[10px] rounded-full font-semibold uppercase tracking-wider px-2 py-0.5" style={{ color: stats.rank.color, background: `${stats.rank.color}22` }}>
-                    {stats.rank.icon} {stats.rank.name}
-                  </span>
-                </div>
-                <div className="mt-2">
-                  <div className="flex justify-between text-[10px] text-text-muted mb-1">
-                    <span>✦ {stats.currentXp} XP</span>
-                    <span>{stats.xpForNext} XP</span>
-                  </div>
-                  <Progress value={stats.currentXp} max={stats.xpForNext} height="md" color="linear-gradient(90deg, #FFC107, #FFE480)" />
-                </div>
-              </div>
-            </div>
-            <div className="grid grid-cols-4 gap-px bg-border-subtle mx-5 mb-4 rounded-xl overflow-hidden">
-              {(
-                [
-                  { label: 'Palabras', value: progress.totalWordsFound, icon: '📖', color: 'text-yellow-neon' },
-                  { label: 'Monedas', value: progress.coins || 0, icon: '🪙', color: 'text-yellow-neon' },
-                  { label: 'Knowledge', value: progress.knowledgePoints || 0, icon: '💎', color: 'text-purple-neon-light' },
-                  { label: 'Racha', value: progress.dailyStreak, icon: '🔥', color: 'text-orange-400' },
-                ] as const
-              ).map(s => (
-                <div key={s.label} className="bg-bg-elevated/60 p-2.5 text-center">
-                  <div className="text-base mb-0.5">{s.icon}</div>
-                  <div className={`text-sm font-bold ${s.color}`}>{s.value}</div>
-                  <div className="text-[8px] text-text-muted uppercase tracking-wider mt-0.5">{s.label}</div>
-                </div>
-              ))}
-            </div>
-          </Card>
-
-          {/* Play Button */}
-          <Button variant="primary" size="lg" fullWidth
-            icon={<IconPlay size={22} />}
-            onClick={onStartGame}
-            className="!text-lg !py-4 !rounded-2xl shadow-[0_6px_20px_rgba(255,193,7,0.25)]"
-          >
-            Comenzar
-          </Button>
-
-          {/* Categories */}
-          <Card className="px-5 py-4">
-            <h3 className="text-overline text-[10px] text-text-muted mb-3">Progreso por Categoría</h3>
-            <div className="space-y-3">
-              {unlockedCats.slice(0, 5).map(cat => (
-                <div key={cat.id} className="flex items-center gap-2.5">
-                  <span className="text-base flex-shrink-0">{cat.icon}</span>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-semibold truncate" style={{ color: cat.color }}>{cat.name}</span>
-                      <span className="text-[9px] text-text-muted flex-shrink-0 ml-2">{cat.count}/{cat.total}</span>
-                    </div>
-                    <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-                      <div className="h-full rounded-full transition-all duration-500" style={{ width: `${cat.total > 0 ? (cat.count / cat.total) * 100 : 0}%`, background: cat.color }} />
-                    </div>
-                  </div>
-                </div>
-              ))}
-              {unlockedCats.length === 0 && <p className="text-xs text-text-muted text-center py-2">Desbloquea categorías subiendo de nivel</p>}
-            </div>
-          </Card>
-        </div>
-      </div>
   )
 }
 
@@ -1024,7 +975,6 @@ export default function App() {
   /* ─── Navigation state ─── */
 
   const [screen, setScreen] = useState<Screen>('home')
-  const [playing, setPlaying] = useState(false)
   const [gameMode, setGameMode] = useState<string>('classic')
   const [gameStarted, setGameStarted] = useState(false)
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
@@ -1240,12 +1190,13 @@ export default function App() {
     selectRef.current = []
   }, [cells, foundWords, game, recordFind, addScorePopup, addParticles, gameMode, gameOver])
 
-  const newGame = useCallback(() => {
+  const newGame = useCallback((mode?: string) => {
     seedRef.current = Date.now().toString()
-    const isDaily = gameMode === 'daily'
+    const m = mode ?? gameMode
+    const isDaily = m === 'daily'
     const seed = isDaily ? getDailySeed() : seedRef.current
     const config = { size: 8, wordCount: 6 }
-    const ws = pickWordsForGame(progress.unlockedCategories, config.wordCount, seed, gameMode)
+    const ws = pickWordsForGame(progress.unlockedCategories, config.wordCount, seed, m)
     const g = generateGrid(config.size, ws, seed)
     setGameWords(ws)
     setGame(g)
@@ -1255,11 +1206,13 @@ export default function App() {
     setRevealedWord(null)
     // Nueva etapa → el cronómetro de etapa parte de 0.
     setStageSeconds(0)
-    handleNewGame(gameMode)
+    handleNewGame(m)
   }, [progress.unlockedCategories, gameMode, handleNewGame])
 
-  const handleStartGame = useCallback(() => {
-    newGame()
+  const handleStartGame = useCallback((mode?: string) => {
+    const m = mode ?? gameMode
+    if (mode) setGameMode(mode)
+    newGame(mode)
     setGameStarted(true)
     // ─── Partida nueva (REGLAS-GENERALES v2): anclar el XP de inicio,
     // resetear contadores y avisar al lobby con el modo como difficulty. ───
@@ -1267,7 +1220,7 @@ export default function App() {
     sessionLevelsRef.current = 0
     stageTimesRef.current = []
     gameCompletedRef.current = false
-    lobbyRef.current?.sendGameStarted({ difficulty: gameMode })
+    lobbyRef.current?.sendGameStarted({ difficulty: m })
   }, [newGame, gameMode])
 
   /**
@@ -1301,6 +1254,7 @@ export default function App() {
   const handleExitToHub = useCallback(() => {
     if (sessionLevelsRef.current > 0) finishPartida(true)
     setGameStarted(false)
+    setScreen('home')
   }, [finishPartida])
 
   /* ─── Reiniciar progreso (empezar de 0) ─── */
@@ -1326,7 +1280,6 @@ export default function App() {
     // invitado, standalone o RPC caída). Se limpia al primer save exitoso
     // post-reset (syncToLobby).
     localStorage.setItem('sopa_reset_pending', '1')
-    setPlaying(false)
     setGameStarted(false)
     setGameOver(false)
     setScreen('home')
@@ -1393,13 +1346,6 @@ export default function App() {
 
   /* ─── Computed stats ─── */
 
-  const headerStats = {
-    level: stats.level,
-    currentXp: stats.currentXp,
-    xpForNext: stats.xpForNext,
-    wordsFound: stats.wordsFound,
-  }
-
   const allFound = foundWords.size === game.words.length && foundWords.size > 0 && !gameOver
   const timedMode = gameMode === 'timed' || gameMode === 'survival'
 
@@ -1426,7 +1372,7 @@ export default function App() {
         ['--game-dpr' as string]: viewport.devicePixelRatio ? String(viewport.devicePixelRatio) : undefined,
       }}
     >
-      {playing ? (gameStarted ? (
+      {gameStarted ? (
         <>
           {/* Game header bar */}
           <div className="flex items-center justify-between px-4 py-2.5 bg-bg-card border-b border-border-subtle">
@@ -1451,7 +1397,7 @@ export default function App() {
               <span className="text-white/20">|</span>
               <span className="text-yellow-neon font-bold">🪙 {progress.coins || 0}</span>
             </div>
-            <button onClick={newGame} className="text-xs bg-white/5 hover:bg-white/10 px-2 py-1.5 rounded-lg transition-colors text-text-muted" title="Nuevo juego">🔄</button>
+            <button onClick={() => newGame()} className="text-xs bg-white/5 hover:bg-white/10 px-2 py-1.5 rounded-lg transition-colors text-text-muted" title="Nuevo juego">🔄</button>
           </div>
 
           <div className="flex-1 flex flex-col justify-center overflow-y-auto bg-bg-primary">
@@ -1493,7 +1439,7 @@ export default function App() {
                 <span className="text-text-muted font-mono text-[10px]">
                   ⏱ {String(Math.floor(stageSeconds / 60)).padStart(2, '0')}:{String(stageSeconds % 60).padStart(2, '0')}
                 </span>
-                <button onClick={newGame} className="flex items-center gap-1 bg-bg-elevated/60 px-3 py-1.5 rounded-lg border border-border-card hover:bg-white/10 transition-colors text-text-secondary">
+                <button onClick={() => newGame()} className="flex items-center gap-1 bg-bg-elevated/60 px-3 py-1.5 rounded-lg border border-border-card hover:bg-white/10 transition-colors text-text-secondary">
                   🔀 Mezclar
                 </button>
               </div>
@@ -1515,37 +1461,30 @@ export default function App() {
           </div>
         </>
       ) : (
-        <GameHubScreen
-          progress={progress}
-          stats={stats}
-          onStartGame={handleStartGame}
-          onBack={() => setPlaying(false)}
-          selectedMode={gameMode}
-          onChangeMode={setGameMode}
-        />
-      )) : (
         <>
-          <Header stats={headerStats} onEncyclopedia={() => setScreen('collection')} onReset={() => setConfirmReset(true)} />
-          <div className="flex-1 flex flex-col overflow-y-auto pb-16">
-            {screen === 'home' && (
-              <HomeScreen
-                onPlay={() => { setPlaying(true); setGameStarted(false) }}
-                onDaily={() => { setPlaying(true); setGameStarted(false) }}
-                onKnowledge={() => setScreen('collection')}
-                onStore={() => setScreen('store')}
-                progress={progress}
-                stats={stats}
-              />
-            )}
-            {screen === 'categories' && <CategoriesScreen progress={progress} />}
-            {screen === 'collection' && <CollectionScreen progress={progress} onBack={() => setScreen('home')} />}
-            {screen === 'profile' && <ProfileScreen progress={progress} stats={stats} lobbyCtx={lobbyCtx} onResetProgress={() => setConfirmReset(true)} />}
-            {screen === 'store' && <StoreScreen progress={progress} onBack={() => setScreen('home')} onBuy={handleBuy} />}
-            {screen === 'challenges' && <ChallengesScreen progress={progress} onBack={() => setScreen('home')} onClaimDaily={handleClaimDaily} />}
-            {screen === 'modes' && <ModesScreen onBack={() => setScreen('home')} bestTimes={progress.bestStageTimes} onSelect={(m) => { setGameMode(m); setPlaying(true); setGameStarted(false) }} />}
-            {screen === 'story' && <StoryScreen onBack={() => setScreen('home')} />}
-            {screen === 'settings' && <SettingsScreen onBack={() => setScreen('home')} />}
-          </div>
+          {screen === 'home' ? (
+            <HallScreen
+              progress={progress}
+              stats={stats}
+              onStartGame={() => handleStartGame()}
+              selectedMode={gameMode}
+              onChangeMode={setGameMode}
+              onStore={() => setScreen('store')}
+              onKnowledge={() => setScreen('collection')}
+              onDaily={() => setScreen('challenges')}
+            />
+          ) : (
+            <div className="flex-1 flex flex-col overflow-y-auto pb-16">
+              {screen === 'categories' && <CategoriesScreen progress={progress} />}
+              {screen === 'collection' && <CollectionScreen progress={progress} onBack={() => setScreen('home')} />}
+              {screen === 'profile' && <ProfileScreen progress={progress} stats={stats} lobbyCtx={lobbyCtx} onResetProgress={() => setConfirmReset(true)} />}
+              {screen === 'store' && <StoreScreen progress={progress} onBack={() => setScreen('home')} onBuy={handleBuy} />}
+              {screen === 'challenges' && <ChallengesScreen progress={progress} onBack={() => setScreen('home')} onClaimDaily={handleClaimDaily} />}
+              {screen === 'modes' && <ModesScreen onBack={() => setScreen('home')} bestTimes={progress.bestStageTimes} onSelect={(m) => handleStartGame(m)} />}
+              {screen === 'story' && <StoryScreen onBack={() => setScreen('home')} />}
+              {screen === 'settings' && <SettingsScreen onBack={() => setScreen('home')} />}
+            </div>
+          )}
           <BottomNav active={screen} onChange={setScreen} />
         </>
       )}
@@ -1604,7 +1543,8 @@ export default function App() {
                 rewardIds: [],
               })
             } catch { /* seguir */ }
-            setPlaying(false); setScreen('collection')
+            setGameStarted(false); setScreen('collection')
+            setFoundWords(new Set())
           }}
         />
       )}
@@ -1629,7 +1569,7 @@ export default function App() {
             // Derrota: cerrar la partida. completed=true solo si completó
             // algún nivel antes; si no, false (perdió) — los puntos suman.
             finishPartida(sessionLevelsRef.current > 0)
-            setPlaying(false); setGameStarted(false)
+            setGameStarted(false); setScreen('home')
           }}
         />
       )}
