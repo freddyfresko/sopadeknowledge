@@ -1,11 +1,11 @@
 # Auditoría del dataset — Sopa de Letras (JuegaHipHop)
 
-Generado: 2026-08-16 00:20
-Total de fichas: **933** (de 933 únicas en todo el dataset)
+Generado: 2026-08-16 00:40
+Total de fichas: **926** (de 926 únicas en todo el dataset)
 
 Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / legacy / extra.
 
-## Breakin' 💃 (108)
+## Breakin' 💃 (105)
 
 ### 1990 — 1990 (Giro de Una Mano)
 *difficulty: hard · src: generated*
@@ -484,17 +484,6 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 ---
 
-### ENDURO — Enduro
-*difficulty: hard · src: legacy*
-
-**Descripción:** Power move donde el breaker gira en el piso apoyado en un codo con rotación continua de las piernas.
-
-**Importancia:** El Enduro es una variación del Elbow Track que enfatiza la resistencia y la velocidad de rotación.
-
-**Relacionadas:** ELBOWTRACK, POWER, WINDMILL
-
----
-
 ### FIVESTEP — Five Step
 *difficulty: medium · src: generated*
 
@@ -853,17 +842,6 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 ---
 
-### NAUTILUS — Nautilus
-*difficulty: hard · src: legacy*
-
-**Descripción:** Freeze donde el cuerpo se enrolla en espiral, con un brazo sosteniendo el peso y las piernas envueltas.
-
-**Importancia:** El Nautilus requiere flexibilidad extrema y es un freeze de firma para breakers avanzados.
-
-**Relacionadas:** FREEZE, PRETZEL, HOLLOWBACK
-
----
-
 ### NIKES — Nikes
 *difficulty: hard · src: generated*
 
@@ -978,17 +956,6 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 **Dato curioso:** Los power moves son los movimientos de rotación y fuerza del breaking: girar sobre la cabeza, la mano, la espalda o el hombro, y balancear el cuerpo en el aire (windmill, flare, airflare) —la familia más espectacular del breaking, y la que exige más años de entrenamiento.
 
 **Relacionadas:** B_BOY, FREEZE, HEADSPIN, POWER, WINDMILL
-
----
-
-### POYZON — Poyzon / Veneno
-*difficulty: medium · src: legacy*
-
-**Descripción:** B-Boy legendario de Rock Steady Crew, conocido por su estilo de footwork rápido y movimientos acrobáticos.
-
-**Importancia:** Poyson representa la evolución del breaking moderno combinando tradición con innovación.
-
-**Relacionadas:** ROCKSTEADY, KENSIFT, FOUNDATION
 
 ---
 
@@ -1392,7 +1359,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 ---
 
 
-## MC 🎤 (115)
+## MC 🎤 (113)
 
 ### ACAPELLA — Acapella
 *difficulty: hard · src: legacy*
@@ -1787,19 +1754,6 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 ---
 
-### DOBLE_PORTERO — Doble Portero
-*difficulty: hard · src: legacy*
-
-**Descripción:** Dúo argentino de rap conformado por los MCs Hache y Bufón, leyendas del rap en español desde mediados de los 90. Conocidos por su lírica agresiva, flows complejos y crítica social afilada.
-
-**Importancia:** Doble Portero es referencia obligada del rap argentino y sudamericano. Su estilo influenció a toda la escena del Río de la Plata y ayudó a definir el sonido del rap underground argentino.
-
-**Dato curioso:** Su nombre proviene de una anécdota callejera: vivían cerca de una cancha de fútbol donde siempre tenían que pasar por dos porteros (vigilantes) para llegar a la esquina donde rapeaban.
-
-**Relacionadas:** SHOHAI, KASE_O, VICO_C
-
----
-
 ### DOBLE_SENTIDO — Doble Sentido
 *difficulty: hard · src: legacy*
 
@@ -1848,7 +1802,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 **Dato curioso:** Actitud Callejera fue uno de los primeros grupos de rap peruano en grabar un disco de estudio en los 90, en una época donde no existía industria del hip hop en el país.
 
-**Relacionadas:** VICO_C, DOBLE_PORTERO, KRB
+**Relacionadas:** VICO_C, KRB, rap peruano
 
 ---
 
@@ -2096,7 +2050,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 **Importancia:** KRB es la semilla del hip hop venezolano. Sin su trabajo pionero en los 90, la escena del rap en Venezuela no tendría la base ni la identidad que tiene hoy.
 
-**Dato curioso:** KRB compartió escenario con artistas internacionales como Molotov y Residente, y sus canciones fueron censuradas en radio venezolana por su contenido políticamente crítico en plena crisis del país.
+**Dato curioso:** Las canciones de KRB fueron censuradas en radio venezolana por su contenido políticamente crítico, en una época sin industria del hip hop en el país.
 
 **Relacionadas:** ESKAY, VICO_C, ACZINO
 
@@ -2263,7 +2217,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 **Importancia:** Las multisílabas son la marca de un MC avanzado. Demuestran dominio del vocabulario y capacidad para estructurar rimas complejas.
 
-**Dato curioso:** Eminem y Big Pun son considerados maestros de la rima multisílaba. Big Pun estableció un récord con 44 rimas multisílabas consecutivas en Super Lyrical.
+**Dato curioso:** Eminem y Big Pun son considerados maestros de la rima multisílaba: el verso de Big Pun en Twinz (Deep Cover, 1998) es uno de los más celebrados del recurso.
 
 **Relacionadas:** TRIPLE_RIMA, RHYME, ALITERACION
 
@@ -2575,19 +2529,6 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 ---
 
-### SHINO_OKAN — Shino Okan
-*difficulty: hard · src: legacy*
-
-**Descripción:** Músico, cantante y compositor argentino de ascendencia japonesa, conocido por su fusión única de rap con rock, jazz, funk y soul. Su propuesta artística trasciende géneros y desafía las clasificaciones tradicionales.
-
-**Importancia:** Shino Okan representa la faceta más experimental y versátil del hip hop argentino. Su propuesta rompe el molde del MC tradicional y expande los límites sonoros de lo que el rap en español puede ser.
-
-**Dato curioso:** Su nombre artístico combina shino (una lectura japonesa) y okan (sonido en japonés), reflejando sus raíces niponas. Su música integra samples de jazz fusión de los 70 con rimas callejeras.
-
-**Relacionadas:** SHOHAI, KASE_O, DOBLE_PORTERO
-
----
-
 ### SHOHAI — Sho-Hai (Hate)
 *difficulty: medium · src: legacy*
 
@@ -2597,7 +2538,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 **Dato curioso:** Sho-Hai usa el alias \"Hate\" en sus proyectos en solitario, jugando con el doble sentido del inglés y su estilo agresivo de rapear.
 
-**Relacionadas:** KASE_O, KRB, DOBLE_PORTERO
+**Relacionadas:** KASE_O, KRB, rap español
 
 ---
 
@@ -2806,13 +2747,13 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 ### VICO_C — Vico C
 *difficulty: medium · src: legacy*
 
-**Descripción:** Armando Lozada, MC y precursor del reggaetón, conocido como El Padre del Hip Hop Chileno... aunque en realidad es puertorriqueño. Fue pionero en fusionar rap con ritmos latinos y letras de la calle en los 80 y 90.
+**Descripción:** Luis Armando Lozada Cruz, MC puertorriqueño conocido como El Padre del Rap Boricua y El Filósofo. Fue pionero del rap en español y precursor del reggaetón, fusionando rap con ritmos latinos y letras de la calle en los 80 y 90.
 
 **Importancia:** Vico C es el pionero del rap en español en Puerto Rico y sentó las bases de lo que después sería el reggaetón. Es respetado como el abuelo del hip hop latino por su influencia en generaciones enteras.
 
 **Dato curioso:** Aunque se le asocia con el rap callejero, grabó canciones de reggae, salsa y rock. Su canción Bomba Para Afincar es considerada la primera canción de reggaetón de la historia.
 
-**Relacionadas:** ESKAY, SHINO_OKAN, ACZINO
+**Relacionadas:** ESKAY, ACZINO, rap en español
 
 ---
 
@@ -3290,7 +3231,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 ### CRAZE — DJ Craze
 *difficulty: medium · src: legacy*
 
-**Descripción:** DJ y turntablist estadounidense de ascendencia nicaragüense, tricampeón mundial de DMC (1998, 1999, 2000), el único DJ en ganar el título tres veces consecutivas. Conocido por su estilo agresivo, mezcla de géneros y dominio técnico absoluto.
+**Descripción:** DJ y turntablist estadounidense de ascendencia nicaragüense, tricampeón mundial de DMC (1998, 1999 y 2000). Conocido por su estilo agresivo, su mezcla de géneros y su dominio técnico absoluto.
 
 **Importancia:** Craze es considerado uno de los mejores DJs de la historia. Su dominio de todos los estilos de scratch y su capacidad para mezclar cualquier género musical lo convierten en un referente absoluto del DJing.
 
@@ -3424,7 +3365,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 **Importancia:** El backspin fue la primera técnica de manipulación de discos después del scratch. Permite al DJ alargar un momento musical o preparar una transición inesperada.
 
-**Dato curioso:** DJ Kool Herc usaba el backspin para repetir los breaks, llamando a la técnica "merry-go-round". Necesitaba dos copias del mismo disco para mantener el break sonando sin interrupción.
+**Dato curioso:** El merry-go-round de DJ Kool Herc no usaba backspins: con dos copias del mismo disco mantenía el break sonando sin interrupción, mientras el backspin es el gesto de rebobinar hacia atrás que suena como un swoosh.
 
 **Relacionadas:** SCRATCH, DJ, BEATJUGGLING
 
@@ -3680,11 +3621,11 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 ### FLARE_SCRATCH — Flare Scratch
 *difficulty: medium · src: legacy*
 
-**Descripción:** Técnica de scratch donde el DJ mantiene el crossfader cerrado y lo abre momentáneamente para dejar pasar fragmentos cortos del sonido del vinilo mientras lo mueve. Produce un sonido entrecortado y rítmico, como una ráfaga pulsátil. Es la base del transform y del crab scratch.
+**Descripción:** Técnica de scratch donde el DJ parte del sonido abierto y corta el crossfader en ráfagas rápidas (clics) mientras mueve el vinilo, produciendo un sonido entrecortado y rítmico. El flare se nombra según cuántos clics haga el fader por cada movimiento del disco.
 
 **Importancia:** El flare es una de las técnicas de scratch más versátiles y fundamentales. Abre la puerta a patrones rítmicos complejos y es la base de muchas técnicas avanzadas de fader.
 
-**Dato curioso:** El flare scratch fue inventado por DJ Flare (Michael Schwartz, San Francisco) en 1987, como variación del transform con el fader cerrado; Qbert y Mix Master Mike lo popularizaron. Debe su nombre a su inventor.
+**Dato curioso:** El flare fue inventado por DJ Flare (Michael Schwartz, San Francisco) en 1987, como variación del transform; Qbert y Mix Master Mike lo popularizaron. Debe su nombre a su inventor.
 
 **Relacionadas:** TRANSFORM, CRAB, CHIRP
 
@@ -3697,7 +3638,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 **Importancia:** El flight case es fundamental para DJs que viajan constantemente. Protege equipos costosos (tornamesas, mezcladores, laptops) de golpes, vibraciones y cambios de temperatura durante el transporte.
 
-**Dato curioso:** Los flight cases están construidos según las especificaciones IATA (International Air Transport Association) para viajar en bodega de avión. Un flight case para dos tornamesas y un mezclador suele pesar entre 20 y 35 kg.
+**Dato curioso:** Los flight cases profesionales se construyen según la especificación ATA (Air Transport Association), que certifica resistencia para viajar en bodega de avión. Un flight case para dos tornamesas y un mezclador suele pesar entre 20 y 35 kg.
 
 **Relacionadas:** CRATE, BACKLINE, RECORD_BAG
 
@@ -3775,7 +3716,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 **Importancia:** \"Holy Grail\" es el pináculo del digging. Encontrar uno es un logro que cualquier DJ recuerda por el resto de su vida. Los holy grails pueden valer desde cientos hasta miles de dólares.
 
-**Dato curioso:** El holy grail más famoso del hip hop es el disco "Amen Brother" de The Winstons (1969), que contiene el Amen Break. Originalmente se vendía por centavos en tiendas de segunda mano; hoy una copia en buen estado puede alcanzar los $5,000 USD.
+**Dato curioso:** El holy grail más famoso del hip hop es el disco Amen, Brother de The Winstons (1969), que contiene el Amen Break: el fragmento más sampleado de la historia, cuyos autores jamás recibieron regalías.
 
 **Relacionadas:** DIGGING, WHITELABEL, RECORD_SHOP
 
@@ -3918,7 +3859,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 **Importancia:** Los megamixes son una herramienta promocional poderosa. Un megamix de un artista puede servir como introducción a su obra, y un megamix de fin de año como cápsula del tiempo musical.
 
-**Dato curioso:** Los megamixes de fin de año de la radio son una tradición desde los 80s. El DJ noruego Kygo publicó un megamix de sus mayores éxitos para cerrar 2020, que se hizo viral en las plataformas de streaming.
+**Dato curioso:** Los megamixes de fin de año de la radio son una tradición desde los 80s: resúmenes de un año musical que se transmiten durante la temporada de fiestas.
 
 **Relacionadas:** MASHUP, REMIX, SET
 
@@ -4698,7 +4639,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 **Importancia:** Los white labels son la moneda de cambio del DJ underground. Tener un white label de un tema antes que nadie le da al DJ una ventaja exclusiva para sonarlo en clubes antes de que se convierta en un hit.
 
-**Dato curioso:** Los white labels más codiciados son las pruebas de prensa de álbumes famosos antes de su lanzamiento. Una copia del white label del álbum "Illmatic" de Nas se vendió por más de $10,000 USD en una subasta en 2018.
+**Dato curioso:** Los white labels más codiciados son las pruebas de prensa (test pressings) de álbumes famosos antes de su lanzamiento: circulan en cantidades mínimas y se convierten en piezas de colección para diggers y DJs.
 
 **Relacionadas:** PROMO, HOLY_GRAIL, BOOTLEG
 
@@ -4718,7 +4659,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 ---
 
 
-## Graffiti 🎨 (119)
+## Graffiti 🎨 (118)
 
 ### 3D — 3D / Sombra Tridimensional
 *difficulty: easy · src: legacy*
@@ -4844,7 +4785,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 **Importancia:** Belton compite directamente con Montana en el mercado europeo. Su ventaja es un precio más accesible y una gama cromática muy extensa (más de 200 colores). Es la marca favorita de muchos writers para bombing por su relación calidad-precio.
 
-**Dato curioso:** Los colores Belton tienen nombres creativos como 'Traffic Red', 'Python Green' o 'Bubble Gum'. La serie 'Molotow Pre' de Belton tiene una presión más baja que Montana, lo que la hace ideal para principiantes que aún controlan el pulso.
+**Dato curioso:** Los colores Belton tienen nombres creativos como 'Traffic Red', 'Python Green' o 'Bubble Gum'. La baja presión de sus sprays la hace ideal para principiantes que aún controlan el pulso.
 
 **Relacionadas:** MONTANA, KRYLON, RUSTOLEUM, CAN, AEROSOL
 
@@ -5117,7 +5058,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 **Importancia:** Un crossout es una declaración de guerra. Implica que consideras al otro writer tan irrelevante que su obra merece ser borrada. Puede desencadenar guerras entre crews que duren años. Es una acción que no se toma a la ligera.
 
-**Dato curioso:** En la historia del graffiti de Nueva York, la guerra entre las crews TPA y TMB comenzó por un crossout en un vagón de la línea 7. La rivalidad duró más de una década y produjo algunas de las piezas más agresivas de la época.
+**Dato curioso:** En la historia del graffiti de Nueva York, los crossouts entre crews rivales desencadenaron guerras que duraron años y produjeron algunas de las piezas más agresivas de la época.
 
 **Relacionadas:** SLASH, BITE, TOY, CREW, VANDAL
 
@@ -5422,19 +5363,6 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 ---
 
-### KETCHUP — Chico de la Ketchup / Especialista en Bombing
-*difficulty: medium · src: legacy*
-
-**Descripción:** Writer conocido como 'Chico de la Ketchup', famoso por su bombing masivo e implacable. Es una figura legendaria en la escena underground por su dedicación total a saturar la ciudad con su tag.
-
-**Importancia:** Ketchup representa el espíritu puro del bombing: cantidad sobre calidad, presencia sobre perfección. Su legado demuestra que un writer puede hacerse un nombre simplemente por su incansable dedicación a bombardear la ciudad.
-
-**Dato curioso:** El apodo 'Ketchup' no viene de la salsa, sino de su tag original que evocaba las letras rojas y el flow líquido de su handstyle. Su tag aparecía tantas veces en un solo barrio que la gente local empezó a llamarlo 'the ketchup kid'.
-
-**Relacionadas:** REVOK, AUGOR, RETNA, BOMB, GETUP
-
----
-
 ### KEYLINE — Keyline / Línea Clave
 *difficulty: medium · src: legacy*
 
@@ -5546,7 +5474,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 **Importancia:** Montana es la marca de referencia mundial en el graffiti. Sus sprays tienen una presión constante que facilita el control del trazo, y su catálogo de colores se ha convertido en el estándar que otros fabricantes imitan.
 
-**Dato curioso:** Existen dos empresas Montana: Montana Cans (Alemania, fundada en 1995) y Montana Colors (España, fundada en 1994). Ambas comenzaron casi al mismo tiempo sin conocer la existencia de la otra, y hoy son competidoras amistosas.
+**Dato curioso:** Existen dos empresas Montana: Montana Cans (Alemania, fundada en 1995) y Montana Colors (España, fundada en 1994). Hoy son dos empresas independientes que compiten en el mercado global del graffiti.
 
 **Relacionadas:** BELTON, KRYLON, RUSTOLEUM, CAN, AEROSOL
 
@@ -5676,7 +5604,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 **Importancia:** La production es el equivalente graffiti de una superproducción cinematográfica. Coordinar colores, espacios y estilos entre varios writers para crear una imagen cohesiva es la máxima expresión de trabajo en equipo y visión artística.
 
-**Dato curioso:** Las productions más famosas pueden requerir decenas de latas de spray y días enteros de trabajo. El récord actual del mural más grande hecho en una sola sesión lo tiene el colectivo 1UP Crew en Berlín.
+**Dato curioso:** Las productions más famosas pueden requerir decenas de latas de spray y días enteros de trabajo, coordinando colores, espacios y estilos entre varios writers.
 
 **Relacionadas:** MURAL, PIECE, CHARACTER, CREW, BACKDROP
 
@@ -6316,7 +6244,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 **Importancia:** Barrio es la raíz más profunda del hip hop latino. Un rapero sin barrio no tiene historia que contar. Es el origen de la identidad y la materia prima de las letras más genuinas.
 
-**Dato curioso:** En Chile, la 'Toma de la Pincoya' y las poblaciones como La Legua o La Pincoya han sido cuna de grandes exponentes del rap nacional como Portavoz y Mc Billeta.
+**Dato curioso:** En Chile, poblaciones como La Pincoya o La Legua han sido cuna de grandes exponentes del rap nacional, como Portavoz.
 
 **Relacionadas:** BLOCK, STREET, REPRESENT, COMUNIDAD
 
@@ -6394,7 +6322,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 **Importancia:** Comunidad es el tejido que sostiene la cultura. Sin comunidad el hip hop sería solo música grabada; con ella es un movimiento vivo que educa, protege y empodera a sus miembros.
 
-**Dato curioso:** La comunidad hip hop chilena es considerada una de las más sólidas de Latinoamérica, con festivales como 'Hip Hop al Parque' que reúnen a miles de seguidores del género.
+**Dato curioso:** La comunidad hip hop chilena es considerada una de las más sólidas de Latinoamérica, con festivales y encuentros de rap, breaking y graffiti en todo el país.
 
 **Relacionadas:** UNIDAD, POSSE, BARRIO, LEGADO
 
@@ -6589,7 +6517,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 **Importancia:** Game es un concepto dual: el 'rap game' (industria) y el 'street game' (calle). Conocer las reglas de ambos es esencial para navegar y sobrevivir en la cultura hip hop.
 
-**Dato curioso:** El álbum 'The Game' de Nas (título original 'Nastradamus') explora esta dualidad, y el rapero The Game adoptó su nombre artístico precisamente por este concepto.
+**Dato curioso:** El rapero The Game adoptó su nombre artístico precisamente por este concepto, reflejando la dualidad entre el rap game y el street game.
 
 **Relacionadas:** HUSTLE, STREET, GRIND, REAL
 
@@ -6784,7 +6712,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 **Importancia:** Openmic es el semillero del hip hop local. Grandes artistas empezaron en open mics, donde desarrollaron su flow, aprendieron a manejar el escenario y construyeron su primera audiencia.
 
-**Dato curioso:** Eminem comenzó su carrera en los open mics del club 'The Shelter' en Detroit, donde ganó notosriedad antes de ser descubierto por Dr. Dre.
+**Dato curioso:** Eminem comenzó su carrera en los open mics del club The Shelter en Detroit, donde ganó notoriedad antes de ser descubierto por Dr. Dre.
 
 **Relacionadas:** CYPHER, BATTLE, JAM, FREESTYLE
 
@@ -6849,7 +6777,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 **Importancia:** Radio fue crucial para la masificación del hip hop antes de internet. Programas como 'Rap City' en MTV y shows de radio local lanzaron carreras y conectaron comunidades dispersas.
 
-**Dato curioso:** La canción 'The Breaks' de Kurtis Blow (1980) fue la primera canción de rap en sonar en la radio comercial y alcanzó el top 40 en Billboard.
+**Dato curioso:** La canción The Breaks de Kurtis Blow (1980) fue la primera canción de rap en sonar masivamente en la radio comercial y la primera en alcanzar disco de oro.
 
 **Relacionadas:** PLAYLIST, OPENMIC, JAM, UNDERGROUND
 
@@ -7051,7 +6979,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 ---
 
 
-## Historia del Hip Hop 📜 (164)
+## Historia del Hip Hop 📜 (163)
 
 ### AFRICA — Hip Hop africano
 *difficulty: medium · src: generated*
@@ -7190,7 +7118,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 **Importancia:** Bad Boy Records creó el modelo del sello de hip hop como marca de estilo de vida, integrando moda, videos cinematográficos y producción pulida que llevó el rap a la cima de la cultura pop.
 
-**Dato curioso:** El logotipo de Bad Boy es una referencia a la película 'Bad Boys' (1983) con Sean Penn, y el lema del sello 'Can't Stop, Won't Stop' se convirtió en un mantra del hip hop.
+**Dato curioso:** El lema del sello 'Can't Stop, Won't Stop' se convirtió en un mantra del hip hop.
 
 **Relacionadas:** BIGGIE, PUFF, MASE, FAITH
 
@@ -7255,7 +7183,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 **Importancia:** Big L es uno de los MCs más respetados entre los entendidos del hip hop, considerado un 'rapper's rapper' cuyo talento lírico inspira a generaciones de artistas underground.
 
-**Dato curioso:** Big L operaba el sello independiente Flamboyant Entertainment con su hermano y fue dueño de una tienda de ropa en Harlem llamada 'Children of the Corn' antes de su trágico asesinato a los 24 años.
+**Dato curioso:** Big L operaba el sello independiente Flamboyant Entertainment con su hermano y fue parte del colectivo Children of the Corn, junto a Camron y Mase, antes de su trágico asesinato a los 24 años.
 
 **Relacionadas:** DITC, HARLEM, CHILDRENOFCORN, LIFESTYLES, PUNCHLINE
 
@@ -7281,7 +7209,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 **Importancia:** Las listas de Billboard son el termómetro oficial del éxito comercial en la música. Para los artistas de hip hop, alcanzar el #1 en Billboard es la validación definitiva de su impacto en la cultura popular.
 
-**Dato curioso:** La primera canción de rap en alcanzar el #1 del Billboard Hot 100 fue 'Walk This Way' de Run-D.M.C. con Aerosmith en 1986. Desde entonces, cientos de canciones de rap han dominado la lista.
+**Dato curioso:** Walk This Way de Run-D.M.C. con Aerosmith llegó al puesto 4 en 1986, y la primera canción de rap en alcanzar el #1 del Billboard Hot 100 fue I'll Be Missing You de Puff Daddy (1997). Desde entonces, cientos de canciones de rap han dominado la lista.
 
 **Relacionadas:** MTV, RAPPERSDELIGHT, CHARTS, HOT100, MEDIA
 
@@ -7290,7 +7218,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 ### BIZ — Biz
 *difficulty: easy · src: legacy*
 
-**Descripción:** Biz Markice (Marcel Theodore Hall, 1964-2021) fue el 'Clown Prince del Hip Hop', conocido por su estilo cómico, su beatboxing innovador y su icónico sencillo 'Just a Friend' (1989). Su personalidad carismática y su habilidad para hacer reír lo convirtieron en una figura única y querida en el género.
+**Descripción:** Biz Markie (Marcel Theodore Hall, 1964-2021) fue el 'Clown Prince del Hip Hop', conocido por su estilo cómico, su beatboxing innovador y su icónico sencillo 'Just a Friend' (1989). Su personalidad carismática y su habilidad para hacer reír lo convirtieron en una figura única y querida en el género.
 
 **Importancia:** Biz Markie demostró que el hip hop podía ser divertido y alegre sin perder credibilidad. Su influencia en el beatboxing y el rap cómico es incalculable, y su legado de autenticidad y buen humor perdura.
 
@@ -7359,7 +7287,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 **Importancia:** Boston representa la calidad del hip hop underground de la Costa Este, donde el arte lírico y la producción sin concesiones prevalecen sobre el éxito comercial.
 
-**Dato curioso:** DJ Premier, aunque nacido en Houston, se mudó a Boston para estudiar en la universidad, y fue allí donde conoció a Guru, formando Gang Starr, uno de los dúos más importantes del hip hop.
+**Dato curioso:** DJ Premier, aunque nacido en Houston, se crió en Nueva York, donde conoció a Guru (oriundo de Boston), formando Gang Starr, uno de los dúos más importantes del hip hop.
 
 **Relacionadas:** GURU, GANGSTARR, EDOG, STATIK, MASSACHUSETTS
 
@@ -7521,19 +7449,6 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 ---
 
-### COKE — Coke
-*difficulty: easy · src: legacy*
-
-**Descripción:** 'Coke' se refiere a la mezcla de rap con referencias al tráfico de cocaína, que apareció prominentemente en el gangsta rap de los 80s y 90s. También alude al productor y DJ DJ Kool Herc, cuyo apodo 'Hercules' se asociaba al sonido de los 'Herb' y 'Coke' en la jerga del Bronx.
-
-**Importancia:** La cultura de la cocaína en el hip hop refleja la realidad de las comunidades marginadas durante la epidemia de crack de los 80s. Artistas como Rick Ross, Pusha T y Jay-Z han narrado esta realidad en su música.
-
-**Dato curioso:** El apodo 'Coke' para Kool Herc surge de la jerga callejera del Bronx donde 'coke' (cola) y 'herc' se usaban indistintamente en su nombre. No tiene relación directa con la droga en el caso de Herc.
-
-**Relacionadas:** DJ_KOOL_HERC, CRACK, PUSHA
-
----
-
 ### COMDEN — Comden
 *difficulty: medium · src: legacy*
 
@@ -7619,7 +7534,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 **Importancia:** Cypress Hill fue pionero en representar la experiencia latina/chicana en el hip hop mainstream, abriendo puertas para generaciones de raperos latinos. Su defensa de la marihuana medicinal también los convirtió en activistas culturales.
 
-**Dato curioso:** Cypress Hill fue el primer grupo de rap en tener su propio programa de cocina de cannabis en Netflix ('Bong Appétit'), y B-Real tiene su propia línea de semillas de marihuana.
+**Dato curioso:** Cypress Hill tuvo su propio programa de cocina de cannabis, Bong Appétit, en el canal Viceland, y B-Real tiene su propia línea de semillas de marihuana.
 
 **Relacionadas:** BREAL, MUGGS, SOUTHGATE, INSANECLOWN
 
@@ -7905,7 +7820,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 **Importancia:** The Black Eyed Peas, con Fergie como frontwoman, llevaron el hip hop a la audiencia pop más amplia posible, demostrando que el género podía ser el sonido dominante de la música popular mundial.
 
-**Dato curioso:** Fergie se unió a Black Eyed Peas en 2003 reemplazando a Nicole Scherzinger. Su álbum 'Elephunk' con ella vendió más de 8 millones de copias, catapultando al grupo al estrellato global.
+**Dato curioso:** Fergie se unió a Black Eyed Peas en 2003 reemplazando a Kim Hill. Su álbum 'Elephunk' con ella vendió más de 8 millones de copias, catapultando al grupo al estrellato global.
 
 **Relacionadas:** BEP, WHEREISLOVE, MYHUMPS
 
@@ -8009,7 +7924,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 **Importancia:** Esta era elevó el rap de música juvenil a arte respetado, con letras complejas, producción innovadora y una explosión de creatividad que rara vez se ha igualado.
 
-**Dato curioso:** En 1993, un año considerado el mejor de esta era, se lanzaron álbumes clásicos como 'Enter the Wu-Tang (36 Chambers)', 'Illmatic', 'Midnight Marauders' y 'Buhloone Mindstate' en menos de 12 meses.
+**Dato curioso:** En 1993 se lanzaron clásicos como 'Enter the Wu-Tang (36 Chambers)', 'Midnight Marauders' y 'Buhloone Mindstate' en menos de 12 meses; al año siguiente (abril de 1994) llegó 'Illmatic' de Nas.
 
 **Relacionadas:** OLDSCHOOL, NEWSCHOOL, ILLMATIC, TRIBE, WUTANG
 
@@ -8178,7 +8093,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 **Importancia:** Jam Master Jay fue la cara pública del DJ en el hip hop mainstream, demostrando que el DJ era tan importante como el MC. Su asesinato en 2002 conmocionó al mundo del hip hop y sigue sin resolverse judicialmente.
 
-**Dato curioso:** Jam Master Jay fue asesinado en su estudio de grabación en Jamaica, Queens, por un motivo que la policía relaciona con el tráfico de drogas. El caso sigue abierto y ha tenido múltiples sospechosos pero ninguna condena firme.
+**Dato curioso:** Jam Master Jay fue asesinado en su estudio de grabación en Jamaica, Queens, en 2002. El caso se resolvió en 2024: Karl Jordan Jr. y Ronald Washington fueron condenados por el asesinato.
 
 **Relacionadas:** RUN_DMC, RUN, QUEENS, ADIDAS, MIXER
 
@@ -8490,7 +8405,7 @@ Orden: alfabético por palabra. `src` = generated (Enciclopedia HH, manda) / leg
 
 **Importancia:** Missy rompió todos los moldes de la mujer en el hip hop, demostrando que podía ser exitosa sin hipersexualizarse, y estableciéndose como productora y compositora en una industria dominada por hombres.
 
-**Dato curioso:** Missy fue la primera rapera en ganar un MTV Video Music Award por Mejor Video del Año ('Work It', 2002) y recibió un homenaje en los MTV VMAs 2019 por su influencia en la cultura pop.
+**Dato curioso:** Missy fue la primera rapera en ganar un MTV Video Music Award por Mejor Video del Año ('Work It', 2003) y recibió un homenaje en los MTV VMAs 2019 por su influencia en la cultura pop.
 
 **Relacionadas:** TIMBALAND, WORKIT, FREAKON
 

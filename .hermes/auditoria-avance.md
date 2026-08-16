@@ -1,47 +1,58 @@
-# Auditoría Hip Hop Chileno — RESUELTA (ago-2026)
+# Auditoría factual del dataset — Sopa de Letras (JuegaHipHop) — COMPLETA ✅
 
-Revisión factual completa de la categoría `chile` de la Sopa de Letras.
-**140 fichas → 102** (38 eliminadas, ~45 corregidas). Fuentes: Chilerap Wiki, Wikipedia, Fandom, Deezer, DW, prensa.
+**Resultado final: 971 → 926 fichas únicas** (45 eliminadas, ~76 corregidas). Build ✅ lint ✅.
 
-## ELIMINADAS (38 — sin sustento / ficticias)
-ÁCIDO, ARGOLLO, AXEL, B-Noise, CANSADO, CHINO, CIELO, EMSHELL, ESKINA, FIDEL, GUACHO, JOTA J, KOLECTIVO, KVS, LENGUA, MACHETE, MAQUETAS, MATERIA PRIMA, MORBO, PANKY, PAPAFUMA, PIÑERA, PROMESAS QUE VALEN, SALCHIPAPA, SANTY, SUBCIUDAD, TAINY, FAMILIA, VALEN, PRIMA, PURO, CHILI, SAGA, ECU, JOTAOSA, FRAINSTRUMENTOS, RECREO, JESÚSDELGRANPODER (JGP).
+## Por categoría
 
-(ECU/JOTAOSA/FRAINSTRUMENTOS/CHR eran "miembros de MOVO" inexistentes — MOVO real: Aerstame, Stailok, DJ Acres, Semillah, MC Piri. JGP: solo existe la devoción boliviana, no el grupo.)
+| Categoría | Antes | Después | Eliminadas | Corregidas |
+|---|---|---|---|---|
+| chile | 140 | 102 | 38 | ~45 |
+| djing | 143 | 143 | 0 | 8 |
+| graffiti | 119 | 118 | 1 (Ketchup) | 4 |
+| mcing | 115 | 113 | 2 (Shino Okan, Doble Portero) | 3 |
+| historia | 164 | 163 | 1 (COKE) | 11 |
+| produccion | 73 | 73 | 0 | 0 |
+| beatbox | 49 | 49 | 0 | 0 |
+| cultura | 60 | 60 | 0 | 5 |
+| breaking | 108 | 105 | 3 (Enduro, Nautilus, Poyzon) | 0 |
 
-## CORREGIDAS (error factual → dato verificado)
-- **Tiro de Gracia**: era Cenzi+Lenwa hermanos Gálvez → **Juan Sativo + Lenwa Dura** (con Explícito y luego Zaturno); Ser Humano (1997, EMI) +80.000 copias; video El Juego Verdadero en Museo de Historia Natural rotó en MTV; disputa del nombre INAPI (2019 Lenwa, 2023 Sativo); abrió Viña 2014.
-- **Zaturno**: "originario de Talcahuano" → **Juan Manuel Lagos Sepúlveda, nacido en SANTIAGO (1981)**, ex-Tiro de Gracia (entró a los 14), fundador de Tapia Rabia Jackson; "Zaturno Espacial" (2008) grabado en Estocolmo con The Salazar Brothers y Jorge González; nominado MTV Latinos 2009.
-- **Cenzi** → de Makiza (no de TDG); produjo "Patrón del Vicio" (2002).
-- **Lenwa** → Lenwa Dura, con Juan Sativo; solista "Da Lenwage" + Masta Killa.
-- **CHR** → "El Bruto CHR" (rapero underground real, no de MOVO).
-- **Movimiento Original** → Pudahuel 2006; "Grandes Pasos" 130M streams; 3 Pulsar 2018; himno Panamericanos 2023.
-- **Recoleta** → cuna de De Kiruza; La Chimba (quechua).
-- **Stailok** → fundador (Francisco Rojas), no "nueva generación".
-- **Pincoya** → Panteras Negras nació en **Renca (Huamachuco)**, no en La Pincoya.
-- **Talento de Barrio** → película **puertorriqueña** (2008), no chilena.
-- **Salvaje Decibel** → sin RATM; debut "Poblacional" (2007); inéditos → "Homónimo" (2025).
-- **DJ Raff** → de La Pozze Latina; sin Grammy/Snoop/Talib.
-- **Portavoz** → "Chimpancés" con Hordatoj (SHAKA ZOO).
-- **De Kiruza** → Recoleta (no Concepción); debut 1988 "Algo está pasando"; sin Public Enemy.
-- **La Pozze Latina** → Jimmy Fernández panameño (no hondureño); Alerce 1993 / BMG 1999; "Con el color de mi aliento" en MTV Latino.
-- **Bubaseta** → nacido en Suiza 1986, criado en Quilpué (no Viña); KKC; flow singjay.
-- **Adickta Sinfonía** → Maipú (no La Pintana); 2/2/2005; Q.E.P.D. El Silencio (2008) clásico.
-- **Gran Rah** → Sergio Miranda, Puente Alto, activo desde 2002 (sin Marginales).
-- **Gronex** → Carlos Iturriaga, raíces en el sur.
-- **Hordatoj** → Eduardo Herrera, desde 1999, parte en Madrid.
-- **Sergio Castro / Castro** → MC real del freestyle (no pop/Los Mox/Neruda).
-- **Ala-Y** → banda real (no rapero de freestyle de Maipú).
-- **Solo Di Medina / Medina** → sin JGP; participó en el regreso de La Pozze Latina (2013).
-- **Biobío / Concepción** → sin Zaturno ni De Kiruza (ambos de Santiago); polo real: Tono Abstracto.
-- **Legua York** → Festival Agosto Negro (2002); influencias Víctor Jara/Violeta Parra/PE/Panteras.
-- **Liricistas** → trío de Maipú, 20+ años de carrera.
-- **Batalla del Desierto** (Antofagasta), **Cavancha** (Iquique), **Puente Alto Rap**, **Feria del Disco** (Quinta Normal) → eventos REALES, suavizados.
-- **Más** (funFacts inventados limpiados): Chile, La Florida, Cerro Navia, Navia, Estación, Biobío, Talca, Serena, Yungay, Ñuñoa, Mapocho, Quinta, Población Emilia, Rapa Nui, Tarapacá, Victoria, Población Medina, Marginales, Viña, Teorema, Bascur, Ceaese, Jazz Muy Tarde.
+## Eliminadas (45) — no existen / no verificables
 
-## VERIFICADAS OK
-23 fichas generated (Enciclopedia HH) intactas; reales confirmados: Hordatoj, Liricistas, Bascur, Stailok, Gran Rah, Gronex, Jazz Muy Tarde, Ala-Y, Jaas Newen, Batalla del Desierto, Cavancha.
+**chile (38):** Ácido, Argollo, Axel, B-Noise, Cansado, Chino, Cielo, Emshell, Eskina, Fidel, Guacho, JotaJ, Kolectivo, KVS, Lengua, Machete, Maquetas, Materia Prima, Morbo, Panky, Papafuma, Piñera, Promesas Que Valen, Salchipapa, Santy, Subciudad, Tainy (+ gemelas Familia/Valen/Prima/Puro/Chili), Saga, Ecu, Jotaoza, Frainstrumentos, Recreo, Jesús del Gran Poder
+**graffiti (1):** Ketchup
+**mcing (2):** Shino Okan, Doble Portero (confusión con Doble Porción)
+**historia (1):** COKE (ficha basura generada)
+**breaking (3):** Enduro, Nautilus, Poyzon (movimientos inexistentes)
 
-## Estado
-- Categoría chile: 140 → **102 fichas**. Dataset total: 971 → **933 fichas**.
-- `npm run build` ✅ · `npm run lint` ✅ (0 errores) · sin referencias rotas.
-- Exports: `.hermes/auditoria-chile.md` (102), `.hermes/auditoria-dataset-sopa.md` (933).
+## Correcciones gordas con fuente
+
+- **Vico C**: era "El Padre del Hip Hop Chileno" → **El Padre del Rap Boricua** (error garrafal de generación)
+- **Billboard**: Walk This Way llegó al #4 (no #1); primera #1 de rap = Puff Daddy 1997
+- **Fergie**: reemplazó a Kim Hill (no Nicole Scherzinger)
+- **Nas**: nunca tuvo un álbum "The Game" (Nastradamus es el título real)
+- **Hip Hop al Parque**: es el festival de Bogotá, no chileno
+- **Jam Master Jay**: caso resuelto en 2024 (condenas a Jordan Jr. y Washington)
+- **Golden Age**: Illmatic es de abril 1994, no 1993
+- **Cypress Hill**: Bong Appétit es de Viceland, no Netflix
+- **Big L**: Children of the Corn era un colectivo, no una tienda
+- **Biz Markie**: typo en el título ("Biz Markice")
+- **DJ Premier**: se crió en NY, no estudió en Boston
+- **Big Pun**: el verso célebre de multisílabas es de Twinz, no Super Lyrical
+- **KRB**: sin la mención anacrónica a Residente
+- **Adickta Sinfonía**: La Pintana → **Maipú** (el origen de toda la auditoría)
+
+## Categorías limpias (sin cambios)
+
+- **produccion** (73): técnica de estudio toda correcta
+- **beatbox** (49): técnicas toda correctas
+- **breaking** (98 generated): Enciclopedia HH validada; 3 legacy ficticias eliminadas
+
+## Método
+
+1. Exportar categoría con `.hermes/exportar_auditoria.py <cat>`
+2. Leer fichas legacy (las generated de la Enciclopedia ya pasaron validación)
+3. Verificar afirmaciones específicas con web_search/web_extract (Chilerap Wiki, Wikipedia, Fandom, prensa, comunidad b-boy)
+4. Corregir con scripts `fix_*.py` (write_file + terminal; regex-comodín para evitar escape-drift de backslashes)
+5. Verificar `npm run build` + `npm run lint` + related rotos
+
+**Scripts usados:** `fix_djing2/3.py`, `fix_graffiti.py`, `fix_mcing.py`, `fix_mcing2.py`, `fix_historia.py`, `fix_cultura.py`, `fix_breaking.py`
