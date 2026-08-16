@@ -38,7 +38,6 @@ export const extraWords: WordEntry[] = [
   { word: 'PRODUCER', category: 'produccion', difficulty: 'easy', knowledge: { title: 'Producer / Productor', description: 'Creador de beats y responsable del sonido de una canción o álbum. En hip hop, el productor es tan importante como el MC.', importance: 'Grandes productores como Dr. Dre, DJ Premier y Pharrell han definido eras enteras del hip hop con su sonido.', related: ['BEAT', 'SAMPLE', 'MPC'] } },
 
   // ─── HIP HOP CHILENO ───
-  { word: 'SAGA', category: 'chile', difficulty: 'medium', knowledge: { title: 'Saga', description: 'Uno de los primeros programas de radio dedicados al hip hop en Chile. Referente para toda una generación.', importance: 'La radio fue el principal medio de difusión del hip hop chileno antes de internet. Programa Saga era cita obligada.', related: ['CHILENO', 'MC'] } },
 ]
 
 export const extraCategories = [
