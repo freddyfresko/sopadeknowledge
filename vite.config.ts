@@ -33,6 +33,10 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,wav}'],
+        // El SW sirve index.html en navegaciones (SPA): una vez activo el SW
+        // nuevo, el shell sale del precache fresco y NO del caché HTTP viejo
+        // (evita que el usuario vea el build anterior tras un deploy).
+        navigateFallback: 'index.html',
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,

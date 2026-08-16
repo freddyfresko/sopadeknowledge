@@ -139,6 +139,9 @@ export interface PlayerProgress {
   /* Achievements */
   achievements: AchievementProgress[]
 
+  /* Mejor tiempo de etapa por modo (segundos) — ranking de tiempos por etapas */
+  bestStageTimes?: Record<string, number>
+
   /* Profile */
   profile: PlayerProfile
 }

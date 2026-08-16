@@ -4,7 +4,7 @@
  * Centraliza toda la lógica de progresión: XP, niveles, logros,
  * economía, rachas y recompensas diarias.
  */
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import type {
   PlayerProgress,
   Achievement,
@@ -14,6 +14,7 @@ import type {
 import {
   loadProgress,
   saveProgress,
+  defaultProgress,
   addXp,
   recordWordFound,
   claimDaily,
@@ -25,6 +26,7 @@ import {
   getRank,
   startNewGame,
   completeGame,
+  recordStageTime,
   allWords,
   categories,
 } from '../game/progression'
@@ -41,11 +43,24 @@ export function useProgression() {
     }
   })
 
+  // Ref del progress SIEMPRE fresco (se actualiza en cada render Y en cada
+  // persist). Evita el stale-closure: dos handlers encadenados en el mismo
+  // tick (ej: handleRecordStageTime → handleNewGame en onNext) leen el
+  // estado MÁS RECIENTE, no el del render viejo — sin esto, el segundo
+  // persist pisa campos que el primero acaba de guardar (bug real:
+  // bestStageTimes desaparecía de localStorage).
+  const progressRef = useRef(progress)
+  progressRef.current = progress
+
   // Listen for sync events from App
   useEffect(() => {
     const handler = (e: Event) => {
       const merged = (e as CustomEvent<PlayerProgress>).detail
-      setProgress(prev => ({ ...prev, ...merged }))
+      setProgress(prev => {
+        const next = { ...prev, ...merged }
+        progressRef.current = next
+        return next
+      })
     }
     window.addEventListener('sopa-progress-sync', handler)
     return () => window.removeEventListener('sopa-progress-sync', handler)
@@ -58,12 +73,13 @@ export function useProgression() {
   const [newCategories, setNewCategories] = useState<string[]>([])
 
   const persist = useCallback((p: PlayerProgress) => {
+    progressRef.current = p
     saveProgress(p)
     setProgress(p)
   }, [])
 
   const handleFindWord = useCallback((word: string, category: string, difficulty: string): AddXpResult => {
-    let p = { ...progress }
+    let p = { ...progressRef.current }
     p = recordWordFound(p, word, category, difficulty)
     const result = addXp(p, 20, difficulty)
     p = result.progress
@@ -89,7 +105,10 @@ export function useProgression() {
         if (completed) return { ...a, completed: true, completedAt: Date.now() }
         return a
       })
-      setPendingAchievements(prev => [...prev, ...result.newAchievements])
+      // Solo el batch RECIÉN logrado — reemplaza, no acumula. Si
+      // acumuláramos, la notificación mostraría logros que el jugador
+      // ya vio/desbloqueó antes en la sesión ("los que ya tengo").
+      setPendingAchievements(result.newAchievements)
       // Avisar al lobby (App escucha esto) para registrar los logros nuevos
       // en el perfil del jugador (achievement_unlocks).
       window.dispatchEvent(new CustomEvent('sopa-achievement-unlocked', {
@@ -99,43 +118,49 @@ export function useProgression() {
 
     persist(p)
     return result
-  }, [progress, persist])
+  }, [persist])
 
   const handleNewGame = useCallback((mode: string, category?: string) => {
-    let p = startNewGame(progress, mode, category)
+    let p = startNewGame(progressRef.current, mode, category)
     persist(p)
     return p
-  }, [progress, persist])
+  }, [persist])
 
   const handleCompleteGame = useCallback((won: boolean) => {
-    const p = completeGame(progress, won)
+    const p = completeGame(progressRef.current, won)
     persist(p)
-  }, [progress, persist])
+  }, [persist])
+
+  // Mejor tiempo de etapa por modo (ranking de tiempos por etapas).
+  const handleRecordStageTime = useCallback((mode: string, seconds: number) => {
+    const p = recordStageTime(progressRef.current, mode, seconds)
+    if (p !== progressRef.current) persist(p)
+  }, [persist])
 
   const handleClaimDaily = useCallback(() => {
-    const result = claimDaily(progress)
+    const result = claimDaily(progressRef.current)
     if (!result) return null
     persist(result.progress)
     return result.rewards
-  }, [progress, persist])
+  }, [persist])
 
   const handleUsePowerUp = useCallback((type: PowerUpType) => {
-    const newInv = consumePowerUp(progress.powerUps, type)
-    if (newInv === progress.powerUps) return false
-    const p = { ...progress, powerUps: newInv }
+    const newInv = consumePowerUp(progressRef.current.powerUps, type)
+    if (newInv === progressRef.current.powerUps) return false
+    const p = { ...progressRef.current, powerUps: newInv }
     persist(p)
     return true
-  }, [progress, persist])
+  }, [persist])
 
   const handleBuyPowerUp = useCallback((type: PowerUpType) => {
     const cost = POWER_UP_COSTS[type]
-    if ((progress.coins ?? 0) < cost) return false
-    const p = { ...progress }
+    if ((progressRef.current.coins ?? 0) < cost) return false
+    const p = { ...progressRef.current }
     p.coins = (p.coins ?? 0) - cost
     p.powerUps = addPowerUp(p.powerUps, type, 1)
     persist(p)
     return true
-  }, [progress, persist])
+  }, [persist])
 
   // Clear pending notifications
   const clearPendingAchievements = useCallback(() => setPendingAchievements([]), [])
@@ -143,6 +168,18 @@ export function useProgression() {
     setLeveledUp(false)
     setNewCategories([])
   }, [])
+
+  // Reset completo del progreso local (estado React + localStorage).
+  // El lobby se resetea aparte (lobby.resetProgress) — este es el lado local.
+  const handleResetProgress = useCallback(() => {
+    const fresh = defaultProgress()
+    persist(fresh)
+    setPendingAchievements([])
+    setLeveledUp(false)
+    setNewLevel(0)
+    setNewCategories([])
+    return fresh
+  }, [persist])
 
   // Stats
   const stats: GameStats = {
@@ -169,9 +206,11 @@ export function useProgression() {
     handleFindWord,
     handleNewGame,
     handleCompleteGame,
+    handleRecordStageTime,
     handleClaimDaily,
     handleUsePowerUp,
     handleBuyPowerUp,
+    handleResetProgress,
     clearPendingAchievements,
     clearLevelUp,
     getDailyRewardForDay,

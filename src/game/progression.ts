@@ -51,6 +51,7 @@ export function defaultProgress(): PlayerProgress {
       completed: false,
       claimed: false,
     })),
+    bestStageTimes: {},
     profile: {
       displayName: 'BBOYKNOWLEDGE',
       avatarEmoji: '🧢',
@@ -117,6 +118,21 @@ export function recordWordFound(progress: PlayerProgress, word: string, category
   p.knowledgePoints = (p.knowledgePoints || 0) + REWARDS.WORD_FOUND.knowledgePoints
 
   return p
+}
+
+/* ─── Stage times (ranking de tiempos por etapas) ─── */
+
+/**
+ * Registra el tiempo (segundos) de una etapa completada. Solo mejora:
+ * guarda el MENOR tiempo por modo (menos segundos = mejor).
+ */
+export function recordStageTime(progress: PlayerProgress, mode: string, seconds: number): PlayerProgress {
+  const best = progress.bestStageTimes?.[mode]
+  if (best != null && seconds >= best) return progress
+  return {
+    ...progress,
+    bestStageTimes: { ...(progress.bestStageTimes ?? {}), [mode]: seconds },
+  }
 }
 
 /* ─── Daily ─── */

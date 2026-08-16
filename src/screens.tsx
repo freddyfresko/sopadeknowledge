@@ -187,7 +187,7 @@ function getDateKey(): string {
 
 /* ─── Game Modes Screen (unchanged but connected) ─── */
 
-export function ModesScreen({ onBack, onSelect }: { onBack: () => void; onSelect: (mode: string) => void }) {
+export function ModesScreen({ onBack, onSelect, bestTimes }: { onBack: () => void; onSelect: (mode: string) => void; bestTimes?: Record<string, number> }) {
   const modes = [
     { id: 'classic', name: 'Clásico', desc: 'Encuentra todas las palabras sin límite de tiempo', icon: '🎮', color: '#FFC107' },
     { id: 'timed', name: 'Contrarreloj', desc: '90 segundos. +15s por palabra encontrada', icon: '⏱️', color: '#F97316' },
@@ -195,22 +195,29 @@ export function ModesScreen({ onBack, onSelect }: { onBack: () => void; onSelect
     { id: 'category', name: 'Por Categoría', desc: 'Elige una categoría y enfócate en ella', icon: '🎯', color: '#8B5CF6' },
     { id: 'daily', name: 'Desafío Diario', desc: 'La misma sopa para todos, ¡compite!', icon: '⭐', color: '#10B981' },
   ]
+  const fmt = (s: number) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`
   return (
     <div className="flex-1 flex flex-col overflow-y-auto bg-bg-primary">
       <ScreenHeader title="Modos de Juego" onBack={onBack} />
       <div className="px-4 py-5 max-w-lg mx-auto w-full space-y-2.5 pb-24">
-        {modes.map(m => (
-          <button key={m.id} onClick={() => onSelect(m.id)} className="w-full bg-bg-card rounded-xl border border-border-card p-4 flex items-center gap-3.5 hover:bg-white/5 transition-all text-left btn-3d">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-xl flex-shrink-0" style={{ background: `${m.color}22` }}>
-              <span>{m.icon}</span>
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="text-sm font-bold text-white">{m.name}</div>
-              <div className="text-[10px] text-text-muted mt-0.5">{m.desc}</div>
-            </div>
-            <IconForward size={18} className="text-text-muted flex-shrink-0" />
-          </button>
-        ))}
+        {modes.map(m => {
+          const best = bestTimes?.[m.id]
+          return (
+            <button key={m.id} onClick={() => onSelect(m.id)} className="w-full bg-bg-card rounded-xl border border-border-card p-4 flex items-center gap-3.5 hover:bg-white/5 transition-all text-left btn-3d">
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center text-xl flex-shrink-0" style={{ background: `${m.color}22` }}>
+                <span>{m.icon}</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-bold text-white">{m.name}</div>
+                <div className="text-[10px] text-text-muted mt-0.5">{m.desc}</div>
+                {best != null && (
+                  <div className="text-[10px] text-yellow-neon font-mono mt-1">🏆 Mejor etapa: {fmt(best)}</div>
+                )}
+              </div>
+              <IconForward size={18} className="text-text-muted flex-shrink-0" />
+            </button>
+          )
+        })}
       </div>
     </div>
   )
@@ -378,10 +385,12 @@ export function ProfileScreen({
   progress,
   stats,
   lobbyCtx,
+  onResetProgress,
 }: {
   progress: PlayerProgress
   stats: GameStats
   lobbyCtx?: SessionContextPayload | null
+  onResetProgress?: () => void
 }) {
   const rank = getRank(progress.xp)
   const nextRank = RANKS.find(r => r.xpRequired > progress.xp)
@@ -502,6 +511,16 @@ export function ProfileScreen({
             })}
           </div>
         </Card>
+
+        {/* Reset Progress */}
+        {onResetProgress && (
+          <button
+            onClick={onResetProgress}
+            className="w-full mt-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-bold uppercase tracking-wider hover:bg-red-500/20 transition-colors"
+          >
+            🗑️ Reiniciar progreso
+          </button>
+        )}
       </div>
     </div>
   )
